@@ -2214,6 +2214,21 @@ x86_64 Farmwork :
 			< Secondary-Storage - non-volatile memory
 			< Bus - interconnected line
 
+                        AMD64 architecture :
+			  provides 16 general purpose 64-bite registers.
+			  provides 16 SSE registers,each 128 bits wide.
+			  provides 8 x87 floating point registers,each 80 bits wide.
+			  	   (ST0 -- ST7,may be referred to in MMX/3Dow! mode as a 64-bit register.)
+			  Intel AVX(Advanced Vector Externsions) provides 16 256-bit wide AVX registers.
+			  		     	    		 	  (ymm0 -- ymm15)
+			    and these registers are aliased to the respective 128-bit SSE registers(xmm0 -- xmm15)
+
+			  stack grows downwards from high addresses,the end of the input argument area shall be
+			  aligned on a 16 byte boundary.
+			  the 128-byte area beyond the location pointed to by %rsp is considered to be reserved
+			  and shall not be modified by signal or interrupt handles.(this area is known as the red zone)
+			  
+
 	Data size : 
 
 		Computer
@@ -2238,6 +2253,61 @@ x86_64 Farmwork :
 		double		Quadword	64-bits		8bytes
 
 		Actually,size of them defined by operating system.
+
+        Parameter Passing :
+	        INTEGER : this class consists of integral types that fit into one of the general purpose registers.
+		SSE : the class consists of types that fit into a vector register.
+		SSEUP : the class consists of types that fit into a vector register and can be passed and returned
+		      	in the upper bytes of it.
+		X87,X87UP : these classes consists of types that will be returned via the x87 FPU.
+		COMPLEX_X87 : this class consists of types that will be returned via the x87 FPU.
+		NO_CLASS : this class is used as initializer in the algorithms,it will be used for padding and empty
+			   structures and unions.
+		MEMORY : this class consists of types that will be passed and returned in memory via the stack.
+
+		Classification : the size of each argument gets rounded up to eightbytes.
+			       	 (stack always be eightbyte aligned.
+				 // structure or array or union ...
+
+
+		Passing :
+		  if the class is MEMORY,pass the argument on the stack.
+		  if the class is INTEGER,the next available register of the sequence
+		     RDI, RSI, RDX, RCX, R8, R9 is used.
+		     //  R11 is neither required to be preserved,nor is it used to pass arguments.
+		     //  RAX is used to indicate the number of vector arguments passed to a function requiring a 
+		     //	 variable number of arguments.
+		     //  R10 is used for passing a function's static chain pointer.
+
+		  if the class is SSE,the next available vector register is used,the registers are taken in the 
+		  order from XMM0 to XMM7.
+		  if the class is SSEUP,the eightbyte is passed in the next available eightbyte chunk of the last
+		  used vector register.
+		  if the class is X87,X87UP or COMPLEX_X87,it is passed in memory.
+
+		Preserved across function calls :
+		  NO > RAX RCX RDX RSI RDI R8 R9 R10 R11 XMM0-XMM1 XMM2-XMM7 XMM8-XMM15 MMX0-MMX7 ST0-ST1 ST2-ST7
+		       FS X87_SW
+		  YES > RBX RSP RBP R12-R15 X87_CW
+		  PARTIAL > MXCSR
+
+		  //  FS is used to reserved for system(as thread specific data register)
+
+        Returning of Values :
+	        > Classify the return type with the classification algorithm.
+		> if the type has class MEMORY,then the caller provides space for the return value and passes the
+		  address of this storage in RDI as if it were the first argument to the function.
+		  in effect,this address becomes a "hidden" first argument.this storage must not overlap any data
+		  visible to the callee through other names than this argument.
+		  on return RAX will contain the address that has been passed in by the caller in RDI.
+		> if the class is INTEGER,the next available register of the sequence RAX RDX is used.
+		> if the class is SSE,the next available vector register of the sequence XMM0 XMM1 is used.
+		> if the class is SSEUP,the eightbyte is returned in the next available eightbyte chunk of
+		  the last used vector register.
+		> if the class is X87,the value is returned on the X87 stack in ST0 as 80-bit x87 number.
+		> if the class is X87UP,the value is returned together with the previous X87 value in ST0.
+		> if the class is COMPLEX_X87,the real part of the value is returned in ST0 and the imaginary
+		  part in ST1.
 
 	Central Processing Unit :
 

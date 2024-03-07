@@ -460,6 +460,21 @@ Assembly Language Translater :
                     .long 0
                     .long 0
 
+            .previous             swap the current section(and subsection) with most recently
+                                  referenced section/subsection pair prior to this one
+
+            .e.g.
+              .section section1
+                .data 
+                  .long 0         #  now section1.data
+                .text             
+                  nop             #  now section1.text
+                .previous         #  swapback
+                  .long 2         #  now section1.data
+                .text             
+                  nop             #  now section1.text
+                
+
 		---
 	---
 ---
@@ -632,6 +647,7 @@ AT&T Assembly basic explanation :
 			.ascii				text string
 			.asciz				text string use a '\0' as end
 			.byte				a value length is one byte
+            .word               a value length is two bytes
 			.double				double precision floating data
 			.float				single precision floating data
 			.int				32bit integer

@@ -396,6 +396,70 @@ Assembly Language Translater :
 			Use 'GNU/objdump' to checking bottom-floor instructions.
 			Use 'GNU/gprof' to analysing for program code.
 
+        GNU as syntax :
+          Operators :
+            prefix operators >
+              '-'  negative(two's complement negation)
+              '~'  bitwise not(complementation)
+
+            infix operators >
+              highest precedence :
+                '*'     multiplication
+                '/'     division
+                '%'     remainder
+                '<<'    shift left
+                '>>'    shift right
+              intermediate precedence :
+                '|'     bitwise inclusive OR
+                '&'     bitwise AND
+                '^'     bitwise Exclusive OR
+                '!'     bitwise OR NOT
+              low precedence :
+                '+'     addition
+                '-'     substraction
+                '=='    is equal to
+                '<>'    is not equal to
+                '!='    is not equal to
+                '<'     is less than
+                '>'     is greater than
+                '>='    is greater than or equal to
+                '<='    is less than or equal to
+              lowest precedence :
+                '&&'    logical AND
+                '||'    logical OR
+          
+          Reserved symbols :
+            '.'     current position's address
+
+          Assembler directives :
+            .macro name ARGs      macro definition start
+            .endm                 macro difinition end
+                                  #  for refer to an argument,have prefix it with '\'
+
+            .if absolute expression     if branch start
+                expressions
+            .elseif                     elseif branch
+                expressions
+            .else                       else branch
+                expressions
+            .endif                      if branch end
+                                        #  a section of code which is only considered part of
+                                           the source program being assembled if the argument
+                                           is non-zero(result of absolute expression)
+
+            .size  name, expression     set the size associated with a symbol
+
+            .rept  count          repeat the sequence of lines between the .rept
+            .endr                 and the next .endr
+              e.g.
+                .rept 3
+                    .long 0
+                .endr
+                ==>
+                    .long 0
+                    .long 0
+                    .long 0
+
 		---
 	---
 ---
@@ -409,15 +473,15 @@ AT&T Assembly basic explanation :
 			-----
 
 			Stack	--->	Stack section,ESP point to the top of this stack in program.(Because linux use page/vm to mapping for memory,so in 
-					SS a filedescription was saved in it.)
+					        SS a filedescription was saved in it.)
 			-----
 
 			Unmap	--->	When linux load a program will make it a illsion that it have a large memory space.But if program want to using for 
-					these memory,must call 'brt' to map physics for them.
+					        these memory,must call 'brt' to map physics for them.
 			-----
 			data	--->	'data' section is saving some value(variables) them had been initialized.
 			-----
-			bss	--->	'bss' section is saving some value(variables) use 'null' or '0' to initialize them.So it always used to as buffer.
+			bss	    --->	'bss' section is saving some value(variables) use 'null' or '0' to initialize them.So it always used to as buffer.
 			-----
 			text	--->	'text' section is saving program code in binary type with read only.
 			-----
@@ -444,13 +508,28 @@ AT&T Assembly basic explanation :
 
 			What is symbol?
 			Answer: 
-				Symbol is a lable,it is not instruction.If only be processed by translater,translater use it to mark a memory address.
-			So that means a symbol is a address mark or is a address.In program could use symbol to represent a address value.
+				Symbol is a label,it is not instruction.If only be processed by translater,translater use it to mark a memory address.
+			    So that means a symbol is a address mark or is a address.In program could use symbol to represent a address value.
 				The style of symbol : 
-					Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a lable.
+					Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a label.
 				E.g. MSG: (This is a symbol).
-			#	Remember,symbol is a address.
-			# You could use $lable to get address of the lable;straight use lable means get value from the address.
+			#	Remember,symbol is an address.
+			!   You could use $label to get address of the label;straight use label means get value from the address.
+            !   if symbol is a numberic value such 0, 1, 2, ..., 33, ...
+                the suffixes 'b' and 'f' are able to be attached.
+                e.g.
+                  1:
+                        pushl (~vector-$0x80)
+                        nop
+                        nop
+                        jmp 1b      #  backward search label 1
+                        nop
+                        jmp 2f      #  forward search label 2
+                        nop
+                        nop
+                        
+                  2:
+                        jmp common_interrupt
 
 		#	
 			Commands of Assembler>
@@ -497,7 +576,7 @@ AT&T Assembly basic explanation :
 					#	Notice to processor that program would be switching address-type between in 16bit and 32bit.
 			3>ModR : 
 				Some Opcodes needs modifier for understant the registers and memory-position was involed by this usage.
-			Modifier was contained in three for values indenpendy.
+			    Modifier was contained in three for values indenpendy.
 
 			#	Modifier(ModR/M) -- Address accessing mode explanation.
 			#	SIB -- Scale-Index-Base_Address.
@@ -507,12 +586,12 @@ AT&T Assembly basic explanation :
 					Mod | Reg/Opcode | r/m
 	
 				ModR : 2Bits.It always using with 'r/m'.Them defined register or address-accessing-mode in the Opcode.In Opcode,possible 
-			address-accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
+			           address-accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
 				
 				Reg/Opcode : 3Bits.Allowed to use the 3bits to defined Opcode feature or defined register-value further.
 
 				r/m : 3Bits.Defined the other one register for currented Opcode,or combining with the ModR field to defined a Opcode address-
-			-accessing-mode.
+			          -accessing-mode.
 
 				---
 		
@@ -532,7 +611,7 @@ AT&T Assembly basic explanation :
 
 			4>Data element : 
 				The Opcode'Operand.Some Opcode need a data-element as operation destination,so them could read data-element from registers or
-			from memory-position.This 'Value' could contain four for Bytes info.
+			    from memory-position.This 'Value' could contain four for Bytes info.
 
 			##
 
@@ -1207,7 +1286,7 @@ Instructions Set :
 
 				On Intel-Assembly,jmp has the syntax : 
 
-					jmp short location
+					jmp short location      #  eip = eip + displacement{8bits}<range [-127, +128]
 					jmp near ptr location
 					jmp far ptr location
 

@@ -951,7 +951,7 @@ Instructions Set :
 		#	The result:
 				8bit-mul	-->	AX
 				16bit-mul	-->	DX(high 16bit),AX(low 16bit)
-				32bit-mul	-->	EDX(high 32bit),EAX(low 16bit)
+				32bit-mul	-->	EDX(high 32bit),EAX(low 32bit)
 
 		#	'I' could is 'i(Signed)' or null.
 		#	'X' could is 'b','w','l','q'.
@@ -2453,3 +2453,16 @@ x86_64 Farmwork :
 
 
 ---	
+
+Somethings>
+  jmp [label]f/b => jmp to [label] "f"->search forward "b"->search backward
+  e.g.
+    jmp 1f
+    ...
+    1:      #  jmp 1f
+    ...
+    2:      #  jmp 2b
+    ...
+    jmp 2b
+
+

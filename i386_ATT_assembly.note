@@ -6,34 +6,34 @@
 Record parts split : 
         
         /---------------------------------------/
-        --                    ;
-        --    IA-32 CPU Enviornmention    ;
-        --    System Mode            ;
-        --    Cardinality And Complement Code    ;
-        --    Assembly Language Translater    ;
-        --    AT&T Assembly Basic Explanation    ;
-        --    Instructions Set        :
-            --    Send Instructions Set    ;
-            --    Math Operation        ;
-            --    Bit Operation        ;
-            --    Stack Operation        ;
-            --    CPU Flags Change    ;
-            --    String Operation    ;
-            --    Jump And Cycle        ;
-            --    Interrupt        ;
-        --                    ;
-        --    Assembly Functions        ;
-        --    Assembly Library        ;
-        --    System Call            ;
-        --    Inline Assembly            ;
-        --    File Operation In Assembly    ;
-        --                    ;
-    #    --    Optimization            ;
-    #    --    Advance IA-32 Characteristic    ;
-        --    Floating Operation        ;
-        --                    ;
-        --    x86_64 Framework        ;
-        --                    ;
+        --                     
+        --    IA-32 CPU Enviornmention     
+        --    System Mode             
+        --    Cardinality And Complement Code     
+        --    Assembly Language Translater     
+        --    AT&T Assembly Basic Explanation     
+        --    Instructions Set         
+            --    Send Instructions Set     
+            --    Math Operation         
+            --    Bit Operation         
+            --    Stack Operation         
+            --    CPU Flags Change     
+            --    String Operation     
+            --    Jump And Cycle         
+            --    Interrupt         
+        --    Advanceed Math Functions                  
+        --    Assembly Functions         
+        --    Assembly Library         
+        --    System Call             
+        --    Inline Assembly             
+        --    File Operation In Assembly    
+        --                     
+        --    Optimization             
+        --    Advance IA-32 Characteristic     
+        --    Floating Operation         
+        --                     
+        --    x86_64 Architecture      
+        --                     
         /---------------------------------------/
 
     Constraction : i -> immediately-number; m -> memory-place; r -> register;
@@ -59,33 +59,32 @@ CPU primary parts :
         
         #    IA-32 CPU use the technology called 'NetBurst-Controload-Unit' to adjustment for process speed.
         Features of NetBurst :
-            1>    Instruction read and decode in advance.
-                - Instructions prefetch>
-                    Using pipeline to realizate prefetch,so must build cache memory in CPU.The speed of CPU access to cache-memory is 
-                faster than other memory.It is called L1-cache.But program is possable to do jump-operation,at the situation,CPU must clear
-                cache-memory before next prefetch.So introduce L2 cache-memory for adjustment process speed.L1 is independent with L2,if 
-                process do jump-operation,L1 clear and then read new instructions but L2 still save the old instructions.Afters new part have
-                finished,CPU read L2 to process instructions is older L1.
+            1> Instruction read and decode in advance.
+               - Instructions prefetch>
+                   Using pipeline to realizate prefetch,so must build cache memory in CPU.The speed of CPU access to cache-memory is 
+                   faster than other memory.It is called L1-cache.But program is possable to do jump-operation,at the situation,CPU must clear
+                   cache-memory before next prefetch.So introduce L2 cache-memory for adjustment process speed.L1 is independent with L2,if 
+                   process do jump-operation,L1 clear and then read new instructions but L2 still save the old instructions.Afters new part have
+                   finished,CPU read L2 to process instructions is older L1.
                     
-            2>    Branch prediction.
-                - Prediction technology>
-                    1. Deeper prediction.(Allowed CPU to decode instructions across a lot of branch)
-                    2. Dynamic data stream analyse.(Analysing stream with statistics)
-                    3. Reasoning process.(Allowed CPU to confirms that whether the far instructions would be processing,and try to 
-                    treatme    nt them )
+            2> Branch prediction.
+               - Prediction technology>
+                   1. Deeper prediction.(Allowed CPU to decode instructions across a lot of branch)
+                   2. Dynamic data stream analyse.(Analysing stream with statistics)
+                   3. Reasoning process.(Allowed CPU to confirms that whether the far instructions would be processing,and try to 
+                      treatme    nt them )
 
-            3>    No order to process.
-                - None-order-processing-engine>
-                    Analyse data from prefetch/decode pipeline and resort them.The engine could processing these instructions before
-                them would have to process.
-                - Parts>
-                    1. Distributor.(Respone to buffer distribute,if the resources is too less,would be stopping instructions treatment 
-                    and distribute resource to a other instruction it could be finished.)
+            3> No order to process.
+               - None-order-processing-engine>
+                   Analyse data from prefetch/decode pipeline and resort them.The engine could processing these instructions before
+                   them would have to process.
+               - Parts>
+                   1. Distributor.(Respone to buffer distribute,if the resources is too less,would be stopping instructions treatment 
+                      and distribute resource to a other instruction it could be finished.)
+                   2. Registers rename.(Distribute logic registers to treatment the instructions which must use register.)
+                   3. Micro-operation dispatcher.(Send the micro-operation to Retire-unit,and at same time to keep synchronize.
 
-                    2. Registers rename.(Distribute logic registers to treatment the instructions which must use register.)
-                    3. Micro-operation dispatcher.(Send the micro-operation to Retire-unit,and at same time to keep synchronize.
-
-            4>    Retire.(Receives all micro-operation them had been sent by pipeline and adjustment order to normally order.
+            4> Retire.(Receives all micro-operation them had been sent by pipeline and adjustment order to normally order.
 
     Process-Unit Features :
         Built by a Arithmetic-Logic-Unit or  more than one.Them respones to some math operations.
@@ -1496,6 +1495,56 @@ Instructions Set :
     ---
 ---
 
+Advanced Math Functions :
+        The FPU register stack :
+          FPU data registers are called R0--R7,they are linked together to form a stack.
+          FPU register stack is circular,the last register in the stack links back to the first
+          register in the stack.
+
+            +---> [    ST0    ] => R7       TOP => FPU control word register        ||
+            |     [    ST1    ] => R6                                               VV
+            |     [    ST2    ] => R5
+            |     [    ST3    ] => R4
+            |     [    ST4    ] => R3
+            |     [    ST5    ] => R2
+            |     [    ST6    ] => R1
+            +---> [    ST7    ] => R0
+
+            ! when push the ninth value into FPU stack,the stack pointer will wrap around to the
+              first FPU register,and replace it with this new value,then an exception will be raised.
+
+        The FPU status,control,and tag registers :
+          FPU status register >
+            total 16 bits
+            bit 0    invalid operation exception flag
+                1    denormalized operand exception flag
+                2    zero divide exception flag
+                3    overflow exception flag
+                4    underflow exception flag
+                5    precision exception flag
+                6    stack fault                            /* stack overflow/underflow */
+                7    error summary status
+                8    condition code bit 0(C0)
+                9    condition code bit 1(C1)
+               10    condition code bit 2(C2)
+               11    top of stack pointer <--+
+               12                            |
+               13    top of stack pointer <--+
+               14    condition code bit 3(C3)
+               15    FPU busy flag
+
+             bit [8, 9, 10, 14] are used together to indicate specific error codes from the result
+             of floating point operations.they are usually used with the exception flags to indicate
+             a specific exception condition.
+             ! exception flag bits will be kept set until program clear them.
+             ! the top of stack bits are used to indicate which FPU data register is set as the ST0 register.
+                   /* [11, 12, 13] => represent the eight ST registers,_zero_ means ST0 */
+
+           store FPU status register :
+             FSTSW        r/m16        store FPU status register into 16 bit register or memory location
+           load FPU status register :
+             FLDCW        m16          load FPU status register from a memory location
+
 Assembly Functions : 
 
         Assembly Function have three for steps : 
@@ -2309,14 +2358,14 @@ x86_64 FrameWork :
             < Secondary-Storage - non-volatile memory
             < Bus - interconnected line
 
-                        AMD64 architecture :
+            AMD64 architecture :
               provides 16 general purpose 64-bite registers.
               provides 16 SSE registers,each 128 bits wide.
               provides 8 x87 floating point registers,each 80 bits wide.
-                     (ST0 -- ST7,may be referred to in MMX/3Dow! mode as a 64-bit register.)
+                   (ST0 -- ST7,may be referred to in MMX/3Dow! mode as a 64-bit register.)
               Intel AVX(Advanced Vector Externsions) provides 16 256-bit wide AVX registers.
-                                                  (ymm0 -- ymm15)
-                and these registers are aliased to the respective 128-bit SSE registers(xmm0 -- xmm15)
+                                                        (ymm0 -- ymm15)
+              and these registers are aliased to the respective 128-bit SSE registers(xmm0 -- xmm15)
 
               stack grows downwards from high addresses,the end of the input argument area shall be
               aligned on a 16 byte boundary.
@@ -2328,42 +2377,42 @@ x86_64 FrameWork :
 
         Computer
 
-        Byte        8-bits        1byte
-        Word        16-bits        2bytes
-        Double-word    32-bits        4bytes
-        Quadword    64-bits        8bytes
-        DoubleQuadword    128-bits    16bytes
+        Byte            8-bits       1byte
+        Word            16-bits      2bytes
+        Double-word     32-bits      4bytes
+        Quadword        64-bits      8bytes
+        DoubleQuadword  128-bits     16bytes
 
         C/C++
 
-        char        Byte        8-bits        1byte
-        short        Word        16-bits        2bytes
-        int        Double-word    32-bits        4bytes
+        char            Byte           8-bits         1byte
+        short           Word           16-bits        2bytes
+        int             Double-word    32-bits        4bytes
         unsigned int    Double-word    32-bits        4bytes
-        long        Quadword    64-bits        8bytes
-        long long    Quadword    64-bits        8bytes
-        char *        Quadword    64-bits        8bytes
-        int *        Quadword    64-bits        8bytes
-        float        Double-word    32-bits        4bytes
-        double        Quadword    64-bits        8bytes
+        long            Quadword       64-bits        8bytes
+        long long       Quadword       64-bits        8bytes
+        char *          Quadword       64-bits        8bytes
+        int *           Quadword       64-bits        8bytes
+        float           Double-word    32-bits        4bytes
+        double          Quadword       64-bits        8bytes
 
         Actually,size of them defined by operating system.
 
         Parameter Passing :
-            INTEGER : this class consists of integral types that fit into one of the general purpose registers.
-        SSE : the class consists of types that fit into a vector register.
-        SSEUP : the class consists of types that fit into a vector register and can be passed and returned
+          INTEGER : this class consists of integral types that fit into one of the general purpose registers.
+          SSE : the class consists of types that fit into a vector register.
+          SSEUP : the class consists of types that fit into a vector register and can be passed and returned
                   in the upper bytes of it.
-        X87,X87UP : these classes consists of types that will be returned via the x87 FPU.
-        COMPLEX_X87 : this class consists of types that will be returned via the x87 FPU.
-        NO_CLASS : this class is used as initializer in the algorithms,it will be used for padding and empty
-               structures and unions.
-        MEMORY : this class consists of types that will be passed and returned in memory via the stack.
+          X87,X87UP : these classes consists of types that will be returned via the x87 FPU.
+          COMPLEX_X87 : this class consists of types that will be returned via the x87 FPU.
+          NO_CLASS : this class is used as initializer in the algorithms,it will be used for padding and empty
+                     structures and unions.
+          MEMORY : this class consists of types that will be passed and returned in memory via the stack.
+                   // never loaded into register,only passed in stack,and returned from stack to memory location.
 
-        Classification : the size of each argument gets rounded up to eightbytes.
-                        (stack always be eightbyte aligned.
-                 // structure or array or union ...
-
+          Classification : the size of each argument gets rounded up to eightbytes.
+                           (stack always be eightbyte aligned.
+                           // structure or array or union ...
 
         Passing :
           if the class is MEMORY,pass the argument on the stack.
@@ -2371,8 +2420,9 @@ x86_64 FrameWork :
              RDI, RSI, RDX, RCX, R8, R9 is used.
              //  R11 is neither required to be preserved,nor is it used to pass arguments.
              //  RAX is used to indicate the number of vector arguments passed to a function requiring a 
-             //     variable number of arguments.
+             //  variable number of arguments.
              //  R10 is used for passing a function's static chain pointer.
+             //  address of object also be considered as a INTEGER.
 
           if the class is SSE,the next available vector register is used,the registers are taken in the 
           order from XMM0 to XMM7.
@@ -2386,51 +2436,102 @@ x86_64 FrameWork :
           YES > RBX RSP RBP R12-R15 X87_CW
           PARTIAL > MXCSR
 
-          //  FS is used to reserved for system(as thread specific data register)
+          // FS is used to reserved for system(as thread specific data register)
 
         Returning of Values :
-            > Classify the return type with the classification algorithm.
-        > if the type has class MEMORY,then the caller provides space for the return value and passes the
-          address of this storage in RDI as if it were the first argument to the function.
-          in effect,this address becomes a "hidden" first argument.this storage must not overlap any data
-          visible to the callee through other names than this argument.
-          on return RAX will contain the address that has been passed in by the caller in RDI.
-        > if the class is INTEGER,the next available register of the sequence RAX RDX is used.
-        > if the class is SSE,the next available vector register of the sequence XMM0 XMM1 is used.
-        > if the class is SSEUP,the eightbyte is returned in the next available eightbyte chunk of
-          the last used vector register.
-        > if the class is X87,the value is returned on the X87 stack in ST0 as 80-bit x87 number.
-        > if the class is X87UP,the value is returned together with the previous X87 value in ST0.
-        > if the class is COMPLEX_X87,the real part of the value is returned in ST0 and the imaginary
-          part in ST1.
+          > Classify the return type with the classification algorithm.
+          > if the type has class MEMORY,then the caller provides space for the return value and passes the
+            address of this storage in RDI as if it were the first argument to the function.
+            in effect,this address becomes a "hidden" first argument.this storage must not overlap any data
+            visible to the callee through other names than this argument.
+            on return RAX will contain the address that has been passed in by the caller in RDI.
+          > if the class is INTEGER,the next available register of the sequence RAX RDX is used.
+          > if the class is SSE,the next available vector register of the sequence XMM0 XMM1 is used.
+          > if the class is SSEUP,the eightbyte is returned in the next available eightbyte chunk of
+            the last used vector register.
+          > if the class is X87,the value is returned on the X87 stack in ST0 as 80-bit x87 number.
+          > if the class is X87UP,the value is returned together with the previous X87 value in ST0.
+          > if the class is COMPLEX_X87,the real part of the value is returned in ST0 and the imaginary
+            part in ST1.
+
+        AMD64 Calling Conventions for Linux / Mac OSX :
+          REGISTER           USE                                        SAVED BY
+          rax                return a value from function               caller
+          rbx                optionally used as a base pointer          callee
+          rcx                used to pass the 4th argument              caller
+          rdx                used to pass the 3th argument              caller
+                             (optionally to return a second value) 
+          rsp                stack pointer                              
+          rbp                frame pointer                              callee
+          rsi                used to pass the 2th argument              caller
+          rdi                used to pass the 1th argument              caller
+          r8                 used to pass the 5th argument              caller
+          r9                 used to pass the 6th argument              caller
+          r10                temporary register also used to pass       caller
+                             a function's static chain pointer          
+          r11                temporary register                         caller
+          r12                temporary register                         callee
+          r13                temporary register                         callee
+          r14                temporary register                         callee
+          r15                temporary register                         callee
+
+          The stack :
+                  8n + 16(%rbp)        memory argument eightbyte n
+                                           ...                          previous
+                  16(%rbp)             memory argument eightbyte 0
+
+                  8(%rbp)              return address                   current
+                  0(%rbp)              previous %rbp value
+                  -8(%rbp)             unspecified
+                                           ...
+                  0(%rsp)              variable size                    current
+                  -128(%rsp)           red zone
+
+                  e.g.
+                          /* rsp => return address */
+                          subq $0x08, %rsp          # preserve space to store rbp
+                          movq %rbp, (%rsp)         # store rbp
+                          movq %rsp, %rbp           # use rbp as frame pointer
+                          subq $0xff, %rsp          # preserve space to store variables
+                          movq $0xff, -16(%rbp)     # store 0xff in stack
+                          ...
+                          movq %rbp, %rsp
+                          movq (%rsp), %rbp         # restore rbp
+                          addq $0x08, %rsp          # let rsp => return address
+
+                          [    return address    ] <-- rsp              ||
+                          [    rbp               ] <.. rsp              VV
+                          [    ...               ]
+                          [    0xff              ] <= -16(%rbp)
+                          [    ...               ]
+                          [    ...               ] <= rsp
 
     Central Processing Unit :
+      CPU(Central Processing Unit) includes a number of functional units,including the Arithmetic Logic Unit(ALU).In order to support the ALU,
+      processor registers and cache memory also had contained in CPU.
 
-        CPU(Central Processing Unit) includes a number of functional units,including the Arithmetic Logic Unit(ALU).In order to support the ALU,
-    processor registers and cache memory also had contained in CPU.
+      CPU registers is the temporary storage or working location.
 
-        CPU registers is the temporary storage or working location.
-
-        GRP(General Purpose Registers)>
+      GRP(General Purpose Registers)>
 
         64-bits        32-bits        lower 16-bits        lowest 8-bits
 
-        rax        eax        ax            al
-        rbx        ebx        bx            bl
-        rcx        ecx        cx            cl
-        rdx        edx        dx            dl
-        rsi        esi        si            sil
-        rdi        edi        di            dil
-        rbp        ebp        bp            bpl
-        rsp        esp        sp            spl
-        r8        r8d        r8w            r8b
-        r9        r9d        r9w            r9b
-        r10        r10d        r10w            r10b
-        r11        r11d        r11w            r11b
-        r12        r12d        r12w            r12b
-        r13        r13d        r13w            r13b
-        r14        r14d        r14w            r14b
-        r15        r15d        r15w            r15b
+        rax            eax            ax                   al
+        rbx            ebx            bx                   bl
+        rcx            ecx            cx                   cl
+        rdx            edx            dx                   dl
+        rsi            esi            si                   sil
+        rdi            edi            di                   dil
+        rbp            ebp            bp                   bpl
+        rsp            esp            sp                   spl
+        r8             r8d            r8w                  r8b
+        r9             r9d            r9w                  r9b
+        r10            r10d           r10w                 r10b
+        r11            r11d           r11w                 r11b
+        r12            r12d           r12w                 r12b
+        r13            r13d           r13w                 r13b
+        r14            r14d           r14w                 r14b
+        r15            r15d           r15w                 r15b
 
 
         !! Some GRPs havd had dedicated purposes.

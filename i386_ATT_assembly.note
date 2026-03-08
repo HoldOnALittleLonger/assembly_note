@@ -1,6 +1,3 @@
-/*    My English is very bad,so would have some error words or error statement in this note.    */
-
-                                
                             /*    AT&T_Linux_Assembly    */
 
 Record parts split : 
@@ -13,14 +10,14 @@ Record parts split :
         --    Assembly Language Translater     
         --    AT&T Assembly Basic Explanation     
         --    Instructions Set         
-            --    Send Instructions Set     
-            --    Math Operation         
-            --    Bit Operation         
-            --    Stack Operation         
-            --    CPU Flags Change     
-            --    String Operation     
-            --    Jump And Cycle         
-            --    Interrupt         
+        --    Send Instructions Set     
+        --    Math Operation         
+        --    Bit Operation         
+        --    Stack Operation         
+        --    CPU Flags Change     
+        --    String Operation     
+        --    Jump And Cycle         
+        --    Interrupt         
         --    Advanceed Math Functions                  
         --    Assembly Functions         
         --    Assembly Library         
@@ -36,8 +33,7 @@ Record parts split :
         --                     
         /---------------------------------------/
 
-    Constraction : i -> immediately-number; m -> memory-place; r -> register;
-
+    Constraction : i -> immediatelyd number, m -> memory location, r -> register
 
 IA-32 CPU Enviornmention : 
 
@@ -48,7 +44,7 @@ CPU primary parts :
     3>    Registers.
     4>    Flags.
                             <--->    Registers
-    Work method :     Controload-unit <---> Process-unit
+    Work flow :     Controload-unit <---> Process-unit
                             <--->    Flags
 
     Controload-Unit Features : 
@@ -89,19 +85,18 @@ CPU primary parts :
     Process-Unit Features :
         Built by a Arithmetic-Logic-Unit or  more than one.Them respones to some math operations.
         Pentium 4 Independent ALU :
-                1. Simple integer operation.
-                2. Complex integer operation.
-                3. Float operation.
+          1. Simple integer operation.
+          2. Complex integer operation.
+          3. Float operation.
 
     Registers : 
         Classic : 
-
-            Normal registers    --    Eight for 32bit registers,use them to save data now processing.
-            Segment registers    --    Six for 16bit registers,use them to access to memory.
-            Instruction pointer    --    Unique 32bit register and it point to next instruction.
-            Float data registers    --    Eight for float registers all are 80bit.
-            Control            --    Five for 32bit registers to confirms CPU operation mode.
-            Debug            --    Eight for 32bit registers,used to save information in debug.
+          Normal registers       Eight for 32bit registers,use them to save data now processing.
+          Segment registers      Six for 16bit registers,use them to access to memory.
+          Instruction pointer    Unique 32bit register and it point to next instruction.
+          Float data registers   Eight for float registers all are 80bit.
+          Control                Five for 32bit registers to confirms CPU operation mode.
+          Debug                  Eight for 32bit registers,used to save information in debug.
 
         Normal Registers : 
     
@@ -124,7 +119,7 @@ CPU primary parts :
 
             Memory mode : 
                 1> Flat memory mode.(All system memory as a continuous address space [linear address] )
-                2> Segments memory mode.(Divide memory to some indenpendent memory section,use segment registers to cite them)
+                2> Segments memory mode.(Divide memory to some indenpendent memory section,use segment registers to refer them)
 
                     CS    --    Code section.
                     DS    --    Data section.
@@ -138,14 +133,13 @@ CPU primary parts :
                 3> Realy address memory mode.(All segment registers point to zero-linear-address,and could not changed by program)
 
         Instruction pointer register : 
-        
-            EIP,Instruction pointer.It was called 'Program Counter' in the sometimes.It point to next instruction which would be processing.
-        You can not change it directly,you may to use some instructions to change it.
-            In 'Flat memory mode' it point to linear-address,in 'Segment memory mode' it point to logic-address and ust 'CS' to access memory.
+          EIP,Instruction pointer.It was called 'Program Counter' in the sometimes.It point to next instruction which would be processing.
+          we can not change it directly,need to use some instructions to change it.
+          In 'Flat memory mode' it point to linear-address,in 'Segment memory mode' it point to logic-address and ust 'CS' to access memory.
 
         Controload registers :
         
-            CR0    --    Controload operation mode and system flags.
+            CR0    --    Control operation mode and system flags.
             CR1    --    Not be usage yet.
             CR2    --    Memory page error information.
             CR3    --    Memory page menu information.
@@ -156,189 +150,135 @@ CPU primary parts :
 
     Flags : 
         Classic : 
-        
-            Status flags.
-            Control flags.
-            System flags.
+          Status flags.
+          Control flags.
+          System flags.
 
         Status flags : 
-        
-            Indicate the results by math operation was CPU did.
-
-            Name    Pos    Description
-            |    |    |
-
-            CF    0    'Carry' or 'Borrow'
-                    #    This flag will be setting when CPU done a math operation that is none symbol calculation.
-                    #    If happened 'Carry' or 'Borrow' then set bit up with '1',otherwise set '0'.
-
-            PF    2    'Odd-Even check'
-                    #    If 'PF' set to '1',that means the bits-'1' in result numbers is odd.
-                    #    If 'PF' set to '0',that means the bits-'0' in result numbers is even.
-            
-            AF    4    'Auxiliary flag'
-                    #    For BCD incode mode,if the third bit happened 'Carry' or 'Borrow' then it will be setting to '1'.
-
-            ZF    6    'Zero flag'
-                    #    If result == 0,then it will be opened '1',else it is '0'.
-
-            SF    7    'Symbol flag'
-                    #    The value of this is equal to the most highly bit of result.Use 'SF' could determined value is '+' or '-'.
-        
-            OF    11    'Overflow'
-                    #    Used to signed math operation if plus value too large or minus value too little,this bit will be opening.
+          Indicate the results by math operation was CPU did.
+          Name    bit     Description
+          CF      0       'Carry' or 'Borrow'
+                          This flag will be setting when CPU done a math operation that is none symbol calculation.
+                          If happened 'Carry' or 'Borrow' then set bit up with '1',otherwise set '0'.
+          PF      2       'Odd-Even check'
+                          If 'PF' set to '1',that means the bits-'1' in result numbers is odd.
+                          If 'PF' set to '0',that means the bits-'0' in result numbers is even.
+          AF      4       'Auxiliary flag'
+                          For BCD incode mode,if the third bit happened 'Carry' or 'Borrow' then it will be setting to '1'.
+          ZF      6       'Zero flag'
+                          If result == 0,then it will be opened '1',else it is '0'.
+          SF      7       'Symbol flag'
+                          The value of this is equal to the most highly bit of result.Use 'SF' could determined value is '+' or '-'.
+          OF      11      'Overflow'
+                          Used to signed math operation if plus value too large or minus value too little,this bit will be opening.
 
         Control flags :
-                
-            In the current only defined a 'DF' flag.
-            #    If 'DF' == 1,string-instruction auto to decreasing memory-address arrive next position;
-            #    If 'DF' == 0,string-instruction auto to increasing memory-address for arrive next position;
+          In the current only defined a 'DF' flag.
+          If 'DF' == 1,string-instruction auto to decreasing memory-address arrive next position
+          If 'DF' == 0,string-instruction auto to increasing memory-address for arrive next position
 
         System flags :
+          These flags for controload operations in on system-level,program must not try to change them.
 
-            These flags for controload operations in on system-level,program must not try to change them.
-
-            Name    Pos    Description
-            |    |    |
-
-            TF    8    'Trap flag'
-                    #    Switch ‘Stepover execution' on.
-            
-            IF    9    'Interrupt-on flag'
-                    #    The interrupt was splited to two parts - 'Internal interrupt' and 'External interrupt'
-                    #    Internal-interrupt is from CPU.
-                    #    External-interrupt is from Hardware.
-                    #    Them has been splited to two classic interrupt : 'Can shield' , 'Can not shield'
-                    #    If 'IF' == 1,CPU would be handling the 'Can shield interrupt',else does not to respones it.
-    
-            IOPL    12,13    'I/O privilege-level flag'
-                    #    Indicate to I/O level of parent processing program.'IOPL' must is less than or equal to the I/O address-space 
-                    #    that is program wants to accessing,otherwise all accessing would be refusing.
-    
-            NT    14    'Nested task'
-                    #    Indicate to the parent processing task whether linked to a task other as it.
-
-            RF    16    'Resume flag'
-                    #    Controload CPU how to respones exceptions in debug-mode.
-        
-            VM    17    'Virtual 8086 flag'
-                    #    Indicate to CPU is processing in vir-8086 mode,now,not is 'protect-mode' or 'realy-mode'.
-
-            AC    18    'Align checking flag'
-                    #    Enable memory align-checking with AM-Bit in 'CR0' together.
-
-            VIF    19    'Virtual interrupt flag'
-                    #    If CPU is working in virtual mode,feature of 'VIF' is as same as 'IF'.
-
-            VIP    20    'Virtual inerrupt hang-up'
-                    #    When CPU is working in virtual mode,this flag indicate to a process had been hang-up.
-
-            ID    21    'Identification'
-                    #    Identify the CPU whether support to 'CPUID' instructions.If CPU could to set this flag as '0' or '1',that is
-                    #    means CPU could use 'CPUID' instruction.
+          Name    bit    Description
+          TF      8      'Trap flag'
+                         Switch ‘Stepover execution' on.
+          IF      9      'Interrupt-on flag'
+                         The interrupt was splited to two parts - 'Internal interrupt' and 'External interrupt'
+                         Internal-interrupt is from CPU.
+                         External-interrupt is from Hardware.
+                         Them has been splited to two classic interrupt : 'Can shield' , 'Can not shield'
+                         If 'IF' == 1,CPU would be handling the 'Can shield interrupt',else does not to respones it.
+  
+          IOPL  12,13    'I/O privilege-level flag'
+                         Indicate to I/O level of parent processing program.'IOPL' must is less than or equal to the I/O address-space 
+                         that is program wants to accessing,otherwise all accessing would be refusing.
+          NT      14     'Nested task'
+                         Indicate to the parent processing task whether linked to a task other as it.
+          RF      16     'Resume flag'
+                         Controload CPU how to respones exceptions in debug-mode.
+          VM      17     'Virtual 8086 flag'
+                         Indicate to CPU is processing in vir-8086 mode,now,not is 'protect-mode' or 'realy-mode'.
+          AC      18     'Align checking flag'
+                         Enable memory align-checking with AM-Bit in 'CR0' together.
+          VIF     19     'Virtual interrupt flag'
+                         If CPU is working in virtual mode,feature of 'VIF' is as same as 'IF'.
+          VIP     20     'Virtual inerrupt hang-up'
+                         When CPU is working in virtual mode,this flag indicate to a process had been hang-up.
+          ID      21     'Identification'
+                         Identify the CPU whether support to 'CPUID' instructions.If CPU could to set this flag as '0' or '1',that is
+                         means CPU could use 'CPUID' instruction.
 
     IA-32 Advance Characteristic : 
+      1> Floating-point-unit (FPU).
+      2> Multimedia-extension (MMX).
+      3> Streaming SIMD extension,SSE.
+      4> Hyberthreading.
 
-        1>    Floating-point-unit (FPU).
-        2>    Multimedia-extension (MMX).
-        3>    Streaming SIMD extension,SSE.
-        4>    Hyberthreading.
+      FPU :
+        This feature for deal with float data as faster to be designed.Start on 80486,80287,80387 CPU,advance calculation had been integrated
+        to Main-Processor,so that support these features need addend some registers and processing units.These elements as a piece called 'x87
+        Floating point unit'(FPU)
 
-        FPU :
-            This feature for deal with float data as faster to be designed.Start on 80486,80287,80387 CPU,advance calculation had been integrated
-        to Main-Processor,so that support these features need addend some registers and processing units.These elements as a piece called 'x87 Float-
-        -ing point unit'(FPU)
-
-            Registers :
-                
-                FPU-Reg                Description
-
-                Data-Register            Usage of float data processing 80bit-register total is eight.
-                
-                Status-Register            Report status of FPU 16bit register.
-    
-                Control-Register        Control for FPU precision 16bit register.
-
-                Mark-Register            Descripte to content in data-registers 16bit register.
-
-                FIP-Register            Point to next FPU instruction 48bit pointer.
-
-                FDP-Register            Point to data in memory 48bit pointer.
-
-                Operand-Register        Save the lastest FPU instruction which had been processed 11bit register.
+        Registers :                
+          Data-Register          Usage of float data processing 80bit-register total is eight.
+          Status-Register        Report status of FPU 16bit register.
+          Control-Register       Control for FPU precision 16bit register.
+          Mark-Register          Descripte to content in data-registers 16bit register.
+          FIP-Register           Point to next FPU instruction 48bit pointer.
+          FDP-Register           Point to data in memory 48bit pointer.
+          Operand-Register       Save the lastest FPU instruction which had been processed 11bit register.
 
         MMX :
-
-            'Multimedia extension' was designed for support to 'Single Instruction,Multiple Data,SIMD'.
-
-            MMX enviornment have three new data type of integer : 
-
-                64bit packing byte integer.
-                64bit packing word integer.
-                64bit packing double-words integer.
+          'Multimedia extension' was designed for support to 'Single Instruction,Multiple Data,SIMD'.
+          MMX enviornment have three new data type of integer : 
+            64bit packing byte integer.
+            64bit packing word integer.
+            64bit packing double-words integer.
 
         SSE : 
+          Power up floating performance of  '3DGraph' and 'Dynamic video' and 'Video task'.
+          Pentium3 CPU had been introduced new 128bit registers total is eight (XMM0--XMM7),and a new data type of 'Single precision'.Not only
+          these new features,and SSE had introduced new addend instructions as well.
 
-            Power up floating performance of  '3DGraph' and 'Dynamic video' and 'Video task'.
-            Pentium3 CPU had been introduced new 128bit registers total is eight (XMM0--XMM7),and a new data type of 'Single precision'.Not only
-         these new features,and SSE had introduced new addend instructions as well.
-            Pentium4 (SSE2) introduced five new data type : 
-
-                128bit packing double-precision float data.
-                128bit packing byte integer.
-                128bit packing word integer.
-                128bit packing double-words integer.
-                128bit packing four-words integer.
+          Pentium4 (SSE2) introduced five new data type : 
+            128bit packing double-precision float data.
+            128bit packing byte integer.
+            128bit packing word integer.
+            128bit packing double-words integer.
+            128bit packing four-words integer.
 
         Hyberthreading : 
+          This feature make IA-32 CPU could processing multi-processes at same time.Advantage would indicating on multi-task OS.
+          When we are programming assembly program,you should understand some informations of destination CPU.
 
-            This feature make IA-32 CPU could processing multi-processes at same time.Advantage would indicating on multi-task OS.
+System Mode :
+    Intel processor : 8080,8086/8088,80186,80286,80386,80486,Pentium,PentiumII,PentiumIII,Pentium4...
 
-
-    #    When you are programming assembly program,you should understand some informations of destination CPU.
-
-        ---
-    ---
----
-
-##    System Mode :
-
-        Intel processor : 8080,8086/8088,80186,80286,80386,80486,Pentium,PentiumII,PentiumIII,Pentium4...
-
-        Realy-mode : 
-
-            Such as 8086/8088,them could not support to mulit-tasks-OS.
-            In this mode,address-space is as same as hardware memory number.Programs could access to physics address,and change data in it.
+    Realy-mode : 
+      Such as 8086/8088,them could not support to mulit-tasks-OS.
+      In this mode,address-space is as same as hardware memory number.Programs could access to physics address,and change data in it.
         
-        Protect-mode : 
-            
-            Support to multi-tasks-work-method.All programs could only access to virtual address,exclusive of kernel.
-            For example,after 80386...(include 80386).
+    Protect-mode : 
+      Support to multi-tasks-work-method.All programs could only access to virtual address,exclusive of kernel.
+      For example,after 80386...(include 80386).
 
-        Virtual-8086-mode : 
-            
-            Switch work mode from 'protect mode' to '8086 work mode'.For example,the DOS-window of windowsOS.
-        ---
-    ---
----
+    Virtual-8086-mode : 
+      Switch work mode from 'protect mode' to '8086 work mode'.For example,the DOS-window of windowsOS.
 
-##    Cardinality And Complement Code
-
+Cardinality And Complement Code
     Cardinality convertion :
+      Number - 128    
 
-            Number - 128    
+      Dec:    128
+      Oct:    0200
+      Hex:    0xF0
+      Binary:    10000000
 
-            Dec:    128
-            Ocx:    0200
-            Hex:    0xF0
-
-            Binary:    10000000
-
-        For OCX,'0' is prefix;for HEX,'0x' is prefix.
-        Three binary bits convert to a OCX bit,four binary bits convert to a HEX bit.
-        
-        Value scope : 
-
+      For OCX,'0' is prefix;for HEX,'0x' is prefix.
+      Three binary bits convert to a OCX bit,four binary bits convert to a HEX bit.
+       
+      Value scope : 
         Dec: 0---9
         Ocx: 0---7
         Hex: 0---F (10-A,11-B,12-C,13-D,14-E,15-F)
@@ -346,444 +286,373 @@ CPU primary parts :
 
         Numbering for binary bits,right to left : '7,6,5,4,3,2,1,0'.
         Binary transinformation to Dec: (Such as 128)
-            128=0*2^0 + 0*2^1 + 0*2^2 + 0*2^3 + 0*2^4 + 0*2^5 + 0*2^6 + 1*2^7
+          128 = 0 * 2^0 + 0 * 2^1 + 0 * 2^2 + 0 * 2^3 + 0 * 2^4 + 0 * 2^5 + 0 * 2^6 + 1 * 2^7
 
     Complement code : 
+      For normaly situation use '1 complement-code'.Use the highest bit to indicate '+' or '-'.0--'+',1--'-'.
+      Flip all binary bits and then adding '1' to get a 'Negative number' of the value.
+        e.g.
+          +128 - 10000000    (Positive)
+          -128 - 
+               A: 01111111 (~+128)
+               B: 01111111 + 1
+               C: 10000000 (Negative)
 
-        For normaly situation use '1 complement-code'.Use the highest bit to indicate '+' or '-'.0--'+',1--'-'.
-        Flip all binary bits and then adding '1' to get a 'Negative number' of the value.
-        E.g.
-            +128 - 10000000    (Positive)
-            -128 - 
-                A:    01111111 (~+128)
-                B:    01111111+1
-                C:    10000000 (Negative)
-
-            +83 - 01010011 (Positive)
-            -83 -
-                A:    10101100 (~+83)
-                B:    10101100+1
-                C:    10101101 (Negative)
-
-        ---
-    ---
----
+           +83 - 01010011 (Positive)
+           -83 -
+               A: 10101100 (~+83)
+               B: 10101100 + 1
+               C: 10101101 (Negative)
 
 Assembly Language Translater :
+  For another platform have some another assembly translaters.
 
-        For another platform have some another assembly translaters.
+  Windows : 
+    MASM (Microsoft Assembler),Intel syntax assembly.
 
-        Windows : 
-            MASM (Microsoft Assembler)    --    Intel syntax assembly.
-
-        Linux :
-            GAS (GNU Assembler)        --    AT&T syntax assembly.
-            #    This program as a background assembler for GCC to be designed.
+  Linux :
+    GAS (GNU Assembler),AT&T syntax assembly.
+    # This program as a background assembler for GCC to be designed.
     
-        Windows/Linux :
-            NASM （Newwide Assembler,NASM)    --    Intel syntax or AT&T syntax.
-    
-            HLA (High Levle Assembler,HLA)    --    Intel syntax.
+  Windows/Linux :
+    NASM （Newwide Assembler,NASM),Intel syntax or AT&T syntax.
+    HLA (High Levle Assembler,HLA),Intel syntax.
 
-        Linker :
-            
-            On the linux,could use 'ld' to make execution file.
-    
-        Debuger :
-            
-            On the linux,could use 'GNU/gdb' to debug program.
-            Use 'GNU/objdump' to checking bottom-floor instructions.
-            Use 'GNU/gprof' to analysing for program code.
+  Linker :
+    On the linux,could use 'ld' to make execution file.
 
-        GNU as syntax :
-          Operators :
-            prefix operators >
-              '-'  negative(two's complement negation)
-              '~'  bitwise not(complementation)
+  Debuger :
+    On the linux,could use 'GNU/gdb' to debug program.
+    Use 'GNU/objdump' to checking bottom-floor instructions.
+    Use 'GNU/gprof' to analysing for program code.
 
-            infix operators >
-              highest precedence :
-                '*'     multiplication
-                '/'     division
-                '%'     remainder
-                '<<'    shift left
-                '>>'    shift right
-              intermediate precedence :
-                '|'     bitwise inclusive OR
-                '&'     bitwise AND
-                '^'     bitwise Exclusive OR
-                '!'     bitwise OR NOT
-              low precedence :
-                '+'     addition
-                '-'     substraction
-                '=='    is equal to
-                '<>'    is not equal to
-                '!='    is not equal to
-                '<'     is less than
-                '>'     is greater than
-                '>='    is greater than or equal to
-                '<='    is less than or equal to
-              lowest precedence :
-                '&&'    logical AND
-                '||'    logical OR
+  GNU as syntax :
+    Operators :
+      prefix operators >
+        '-'  negative(two's complement negation)
+        '~'  bitwise not(complementation)
+
+      infix operators >
+        highest precedence :
+          '*'     multiplication
+          '/'     division
+          '%'     remainder
+          '<<'    shift left
+          '>>'    shift right
+
+        intermediate precedence :
+          '|'     bitwise inclusive OR
+          '&'     bitwise AND
+          '^'     bitwise Exclusive OR
+          '!'     bitwise OR NOT
+
+        low precedence :
+          '+'     addition
+          '-'     substraction
+          '=='    is equal to
+          '<>'    is not equal to
+          '!='    is not equal to
+          '<'     is less than
+          '>'     is greater than
+          '>='    is greater than or equal to
+          '<='    is less than or equal to
+
+        lowest precedence :
+          '&&'    logical AND
+          '||'    logical OR
           
-          Reserved symbols :
-            '.'     current position's address
+    Reserved symbols :
+      '.'  current position's address
 
-          Assembler directives :
-            .macro name ARGs      macro definition start
-            .endm                 macro difinition end
-                                  #  for refer to an argument,have prefix it with '\'
+    Assembler directives :
+      .macro name ARGs      macro definition start
+      .endm                 macro difinition end
+                            for refer to an argument,have prefix it with '\'
+      .if absolute expression     if branch start
+              expressions
+      .elseif                     elseif branch
+              expressions
+      .else                       else branch
+              expressions
+      .endif                      if branch end
+                                  a section of code which is only considered part of
+                                  the source program being assembled if the argument
+                                  is non-zero(result of absolute expression)
 
-            .if absolute expression     if branch start
-                expressions
-            .elseif                     elseif branch
-                expressions
-            .else                       else branch
-                expressions
-            .endif                      if branch end
-                                        #  a section of code which is only considered part of
-                                           the source program being assembled if the argument
-                                           is non-zero(result of absolute expression)
+      .size  name, expression     set the size associated with a symbol
+      .rept  count                repeat the sequence of lines between the .rept
+      .endr                       and the next .endr
+      e.g.
+        .rept 3
+                .long 0
+        .endr
 
-            .size  name, expression     set the size associated with a symbol
+        ==>
+                .long 0
+                .long 0
+                .long 0
 
-            .rept  count          repeat the sequence of lines between the .rept
-            .endr                 and the next .endr
-              e.g.
-                .rept 3
-                    .long 0
-                .endr
-                ==>
-                    .long 0
-                    .long 0
-                    .long 0
-
-            .previous             swap the current section(and subsection) with most recently
+      .previous                   swap the current section(and subsection) with most recently
                                   referenced section/subsection pair prior to this one
-
-            .e.g.
-              .section section1
-                .data 
+        .e.g.
+          .section section1
+          .data 
                   .long 0         #  now section1.data
-                .text             
+          .text             
                   nop             #  now section1.text
-                .previous         #  swapback
+          .previous               #  swapback
                   .long 2         #  now section1.data
-                .text             
+          .text             
                   nop             #  now section1.text
-                
-
-        ---
-    ---
----
 
 AT&T Assembly basic explanation :
+  The building for program >
+    In the OS 'GNU/Linux',parts'distribution of program is like this : 
 
-        First : The building for program>
+      [Stack]    Stack section,ESP point to the top of this stack in program.(Because linux use page/vm to mapping for memory,so in 
+                 SS a filedescription was saved in it.)
+      [Unmap]    When linux load a program will make it a illsion that it have a large memory space.But if program want to using for 
+                 these memory,must call 'brt' to map physics for them.
+      [data]     'data' section is saving some value(variables) them had been initialized.
+      [bss]      'bss' section is saving some value(variables) use 'null' or '0' to initialize them.So it always used to as buffer.
+      [text]     'text' section is saving program code in binary type with read only.
 
-        #    In the OS 'GNU/Linux',parts'distribution of program is like this : 
+  The general assembly program with AT&T >
 
-            -----
+    .section .data        #    Declare '.data' section.
+            ...
+    .section .bss         #    Declare '.bss' section.
+            ...
+    .section .text        #    Declare '.text' section.
+    .global _start        #    Declare that the symbol '_start' is a global symbol,it was needed by 'ld'.
 
-            Stack    --->    Stack section,ESP point to the top of this stack in program.(Because linux use page/vm to mapping for memory,so in 
-                            SS a filedescription was saved in it.)
-            -----
-
-            Unmap    --->    When linux load a program will make it a illsion that it have a large memory space.But if program want to using for 
-                            these memory,must call 'brt' to map physics for them.
-            -----
-            data    --->    'data' section is saving some value(variables) them had been initialized.
-            -----
-            bss        --->    'bss' section is saving some value(variables) use 'null' or '0' to initialize them.So it always used to as buffer.
-            -----
-            text    --->    'text' section is saving program code in binary type with read only.
-            -----
-
-        Second : The general assembly program with AT&T>
-
-        #
-            .section .data        #    Declare '.data' section.
+            _start:       #    The program startion.
                     ...
-            .section .bss        #    Declare '.bss' section.
-                    ...
-            .section .text        #    Declare '.text' section.
-            .global _start        #    Declare that the symbol '_start' is a global symbol,it was needed by 'ld'.
 
-                _start:        #    The program startion.
-                    ...
-        #
+    all of the above are not instructions,them are Assembler-commands.These is additional inforamtions would be sent to translater.
+      '.section' ->    Define a section.
+      '.global'  ->    Define a global symbol.
+      '_start:'  ->    A symbol.'linker' will use this symbol to set up for execulation-file'start-pointer.
 
-            These in over all are not instructions,them are Assembler-commands.These is additional inforamtions would be sent to translater.
-            
-            '.section' -> Define a section.
-            '.global' -> Define a global symbol.
-            '_start:' -> A symbol.'linker' will use this symbol to set up for execulation-file'start-pointer.
+    What is symbol?
+      Answer: 
+        Symbol is a label,it is not instruction.If only be processed by translater,translater use it to mark a memory address.
+        So that means a symbol is a address mark or is a address.In program could use symbol to represent a address value.
+        The style of symbol : 
+          Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a label.
 
-            What is symbol?
-            Answer: 
-                Symbol is a label,it is not instruction.If only be processed by translater,translater use it to mark a memory address.
-                So that means a symbol is a address mark or is a address.In program could use symbol to represent a address value.
-                The style of symbol : 
-                    Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a label.
-                E.g. MSG: (This is a symbol).
-            #    Remember,symbol is an address.
-            !   You could use $label to get address of the label;straight use label means get value from the address.
-            !   if symbol is a numberic value such 0, 1, 2, ..., 33, ...
-                the suffixes 'b' and 'f' are able to be attached.
-                e.g.
-                  1:
-                        pushl (~vector-$0x80)
-                        nop
-                        nop
-                        jmp 1b      #  backward search label 1
-                        nop
-                        jmp 2f      #  forward search label 2
-                        nop
-                        nop
-                        
-                  2:
-                        jmp common_interrupt
+        #  Remember,symbol is an address.
+        !  we could use $label to get address of the label;straight use label means get value from the address.
+        !  if symbol is a numberic value such 0, 1, 2, ..., 33, ...
+           the suffixes 'b' and 'f' are able to be attached.
+             e.g.
+               1:
+                       pushl (~vector-$0x80)
+                       nop
+                       nop
+                       jmp 1b      #  backward search label 1
+                       nop
+                       jmp 2f      #  forward search label 2
+                       nop
+                       nop
+               2:
+                       jmp common_interrupt
 
-        #    
-            Commands of Assembler>
-                For anthoer assemblers them have some commands all as not same,the command is not a instruction,commands only be processed by
-            Assembler.Assembler use them to processing for some works.
-                '.section' and '.global' are commands.
+    Commands of Assembler >
+      For anthoer assemblers them have some commands all as not same,the command is not a instruction,commands only be processed by
+      Assembler.Assembler use them to processing for some works.
+        # '.section' and '.global' are commands.
 
-        Third : The AT&T assembly syntax>
-    
-        #    Parts : 
-                1> Optional instruction prefix.
-                2> Operation code(opcode).
-                3> Optional modifier.
-                4> Optional data element.
+    The AT&T assembly syntax >
+      Parts : 
+        1> Optional instruction prefix.
+        2> Operation code(opcode).
+        3> Optional modifier.
+        4> Optional operand
 
-            The basic layout : 
+      The basic style :
+        | I-prefix | Opcode | Modifier(ModR/M) | SIB | Offset | Operand |
                 
-                | I-prefix | Opcode | Modifier(ModR/M) | SIB | Displacement | Data element |
+      Size of them : 
+        I-prefix        0~4 Bytes
+        Opcode          1~3 Bytes
+        ModR            0~1 Bytes
+        SIB             0~1 Bytes
+        Offset          0~4 Bytes
+        Operand         0~4 Bytes
+          
+      1> Opcode : 
+           In assembly the Opcode is only for needed,another Opcode have another feature.
+      2> I-prefix : 
+           The prefix features class : 
+             1.    Lock-prefix and Repeat-prefix.
+                   Lock-prefix indicate to the instruction would lock up share memory zone.
+                   Repeat-prefix always used to repeat instruction operation.
+             2.    Section-override-prefix and Branch-prompt-prefix.
+                   Section-override-prefix could cover to the instruction has been defined segment-register.
+                   Branch-prompt-prefix try to provides the condition-jump-path-clue is possible.
+             3.    Operand-Length-Cover-Prefix.
+                   Notice to processor that program would be switching this Opcode between in 16bit and 32bit.
+             4.    Address-Length-Cover-Prefix.
+                   Notice to processor that program would be switching address-type between in 16bit and 32bit.
+      3> ModR : 
+           Some Opcodes needs modifier for understant the registers and memory-position was involed by this usage.
+           Modifier was contained in three for values indenpendy.
+           #    Modifier(ModR/M) => Address accessing mode explanation.
+           #    SIB => Scale,Index,Base_Address.
+           #    Address_Offset => one or two or four for address displacement Byte.
+
+           ModR/M >
+             Mod | Reg/Opcode | r/m
+
+             ModR : 2 bits.It always using with 'r/m'.Them defined register or address-accessing-mode in the Opcode.In Opcode,possible 
+                    address accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
                 
-            Size of them : 
-                I-prefix -- 0~4 Byte.
-                Opcode -- 1~3 Byte.
-                ModR -- 0~1 Byte.
-                SIB -- 0~1 Byte.
-                Displacement -- 0~4 Byte.
-                Data element -- 0~4 Byte.
-            
-            1> Opcode : 
-                In assembly the Opcode is only for needed,another Opcode have another feature.
-            2> I-prefix : 
-                The prefix features class : 
-                    1.    Lock-prefix and Repeat-prefix.
-                    #    Lock-prefix indicate to the instruction would lock up share memory zone.
-                    #    Repeat-prefix always used to repeat instruction operation.
-            
-                    2.    Section-override-prefix and Branch-prompt-prefix.
-                    #    Section-override-prefix could cover to the instruction has been defined segment-register.
-                    #    Branch-prompt-prefix try to provides the condition-jump-path-clue is possible.
-    
-                    3.    Operand-Length-Cover-Prefix.
-                    #    Notice to processor that program would be switching this Opcode between in 16bit and 32bit.
+             Reg/Opcode : 3Bits.Allowed to use the 3bits to defined Opcode feature or defined register-value further.
 
-                    4.    Address-Length-Cover-Prefix.
-                    #    Notice to processor that program would be switching address-type between in 16bit and 32bit.
-            3>ModR : 
-                Some Opcodes needs modifier for understant the registers and memory-position was involed by this usage.
-                Modifier was contained in three for values indenpendy.
+             r/m : 3Bits.Defined the other one register for currented Opcode,or combining with the ModR field to defined a Opcode
+                   address accessing-mode.
 
-            #    Modifier(ModR/M) -- Address accessing mode explanation.
-            #    SIB -- Scale-Index-Base_Address.
-            #    Address_Displacement -- one or two or four for address displacement Byte.
-
-                ModR/M> (Three fields)
-                    Mod | Reg/Opcode | r/m
-    
-                ModR : 2Bits.It always using with 'r/m'.Them defined register or address-accessing-mode in the Opcode.In Opcode,possible 
-                       address-accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
+           SIB >
+             Scale | Index | Base_Address
                 
-                Reg/Opcode : 3Bits.Allowed to use the 3bits to defined Opcode feature or defined register-value further.
+             Scale : 2Bits.It is the scale_value of the specify Opcode.
+             Index : 3Bits.It specified to a register it would as the Index-Register.
+             Base_Address : 3Bits.It specified to a register it would as the Base_Address-Register.
 
-                r/m : 3Bits.Defined the other one register for currented Opcode,or combining with the ModR field to defined a Opcode address-
-                      -accessing-mode.
+           Address_Offset >
+             It as the index-value for the Memory-Address defined by ModR/M and SIB.Could use it as the Base_Memory_Address.
 
-                ---
-        
-                SIB> (Three fields)
-                    Scale | Index | Base_Address
-                
-                Scale : 2Bits.It is the scale_value of the specify Opcode.
-                Index : 3Bits.It specified to a register it would as the Index-Register.
-                Base_Address : 3Bits.It specified to a register it would as the Base_Address-Register.
+      4> Operand :
+           The Opcode's Operand.Some Opcode need a data-element as operation destination,so them could read data-element from registers or
+           from memory-position.This 'Value' could contain four for Bytes info.
 
-                ---
+           Assembly use these bits build some 'Mnemonic' like these : 
+             mov        $0x32,%EAX    # Move(Send) 0x32 to register EAX.
+             push       %EAX          # Push the element in EAX to stack.
+             pop        %EBX          # Pop the top element in stack to EAX.
+             iaddl      $-20,%EAX     # Signed adding,EAX=%EAX+(-20);this Opcode'operand length is double-words(l,4B).
+             sub        $2,%EAX       # None signed division,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
 
-                Address_Displacement>
-                    It as the index-value for the Memory-Address defined by ModR/M and SIB.Could use it as the Base_Memory_Address.
+    The data types defined by GNU-Assembler >
+      Commands            Type
+      .ascii              text string
+      .asciz              text string use a '\0' as end
+      .byte               a value length is one byte
+      .word               a value length is two bytes
+      .double             double precision floating data
+      .float              single precision floating data
+      .int                32bit integer
+      .long               32bit integer
+      .octa               sixteen bytes integer
+      .quad               quad bytes integer
+      .short              16bit integer
+      .single             single precision floating data
 
-                ---
+      # Remember : 
+          These types all were defined by assembler,but in memory,them only is some memory unit(1B/Unit).
+          For the '.int',assembler would open a 4Bytes space up,that is the four for memory units and them are continuous.
+          All types only is some memory units,and 'one unit have 8bit length'!The memory units all are save some binary datas.
+          we could understand to the type like that open some memory space up.
+            e.g.
+              MSG:
+                      .ascii "Hello World"
 
-            4>Data element : 
-                The Opcode'Operand.Some Opcode need a data-element as operation destination,so them could read data-element from registers or
-                from memory-position.This 'Value' could contain four for Bytes info.
+             'MSG:'   It is a symbol which is a memory address.
+             '.ascii' Data type 'text string'.
+             "..."    GAS interprets the context inclued in '"' as a ASCII string.
 
-            ##
+      Static value symbol : 
+        Command : '.equ'
+          e.g.
+                  .equ Name,Value
 
-        #    Assembly use these bits build some 'Mnemonic' like these : 
-            
-            mov    $0x32,%EAX    //    Move(Send) 0x32 to register EAX.
-            push    %EAX        //    Push the element in EAX to stack.
-            pop    %EBX        //    Pop the top element in stack to EAX.
-            iaddl    $-20,%EAX    //    Signed adding,EAX=%EAX+(-20);this Opcode'operand length is double-words(l,4B).
-            sub    $2,%EAX        //    None signed division,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
-            
-        ---
+            Name is a symbol,Value is the const value.Then we could refer it in '.text' with a '$'.
+            Like this : $Name
 
-        Fourth : The data types defined by GNU-Assembler>
+      Data type in bss section :
+        Commands    Description
+        .comm       Declare normaly memory zone for uninitialized-data.
+        .lcomm      Declare locale normaly memory zone for uninitialized-data.
 
-            Commands            Type
+        Syntax : 
+          .comm symbol, length
+          .lcomm symbol, length
 
-            .ascii                text string
-            .asciz                text string use a '\0' as end
-            .byte                a value length is one byte
-            .word               a value length is two bytes
-            .double                double precision floating data
-            .float                single precision floating data
-            .int                32bit integer
-            .long                32bit integer
-            .octa                sixteen bytes integer
-            .quad                quad bytes integer
-            .short                16bit integer
-            .single                single precision floating data
+          .comm type could be accessing by others external programs.
+          .lcomm type could not be accessing by others external programs.
 
-        # Remember : 
-            These types all were defined by assembler,but in memory,them only is some memory unit(1B/Unit).
-        For the '.int',assembler would open a 4Bytes space up,that is the four for memory units and them are continuous.All types only is some memory
-        units,and 'one unit have 8bit length'!The memory units all are save some binary datas.You could understand to the type like that open some 
-        memory space up.
+          The space size is length would be fulled by translater with '0'.
 
-            For example : 
-            
-                MSG:
-                    .ascii "Hello World"
-            ##
-                'MSG:' -- It is a symbol which is a memory address.
-                '.ascii' -- Data type 'text string'.
-                "..." -- GAS interprets the context in '"' as a ASCII string.
-
-            Static value symbol : 
-            
-                Command : '.equ'
-    
-                For example : .equ Name,Value
-
-                #    Name is a symbol,Value is the const value.Then you could cite it in '.text' with a '$'.
-                #    Like this : $Name
-
-        # bss section data type : 
-
-            Commands    Description
-
-            .comm        Declare normaly memory zone for uninitialized-data.
-            .lcomm        Declare locale normaly memory zone for uninitialized-data.
-
-            Syntax : 
-                .comm(.lcomm) symbol,length
-
-            .comm type could be accessing by others external programs.
-            .lcomm type could not be accessing by others external programs.
-
-            The space size is length would be fulled by translater with '0'.
-
-        ---
-
-        Fiveth : Data and Address accessing and Registers cite>
-
-            Immediate number : 
-                    'ImmN' always would as the Immediate number used in the instrcutions.
-            '11','0x11','012','0B00001111' and more all are 'Immediate numbers',in AT&T,if you want use a ImmN in a instruction,must to adding a 
+    Data and Address accessing and Registers refer >
+      Immediate number : 
+        'ImmN' always would as the Immediate number used in the instrcutions.
+        '11','0x11','012','0B00001111' and more all are 'Immediate numbers',in AT&T,if we want use a ImmN in a instruction,must to adding a 
         prefix '$'.Like this : $0x12,$12,$033,$0B10010011 ...
 
-            Address accessing : 
-                    Address accessing is that use a memory address unit in a instruction to I/O data.
-                AT&T use 'indexed memory mode' to accessing for memory address unit.
-            
-                # Indexed memory mode >
-                    The memory address have be determinded by these items : 
+      Address accessing : 
+        Address accessing is that use a memory address unit in a instruction to I/O data.
+        AT&T use 'indexed memory mode' to accessing for memory address unit.
+        # Indexed memory mode >
+            The memory address have be determinded by these items : 
+              Base_Address
+              The offset of Base_Address
+              Data element length
+              Index_Address to Determinding for the element
+
+            The general expression style : section:displacement(Base,Index.Scale)
+              But Linux working on the Protect method,exclution for kernel programs all applications could only seen logic linear address.
+              So could not use the segment registers in that expression.
+
+            The calculation method : 
+              The-real-address = Section_Reg * 16 + Base_Addres + Index * Scale + Offset
                     
-                    #    Base_Address
-                    #    The displacement of Base_Address
-                    #    Data element length
-                    #    Index_Address to Determinding for the element
+              Because the protect working mode,so use Base_Address,Index_Address,Scale,Offset to access to memory location.
+              Base_Address and Index_Address could is anyregister which is 32bit.
+              Scale could is the value 1,2,4,8.
+              Offset is the Decimal Positive or Negative number.
+              And the Base_Addres and Index_Addres could only use ones of them,but at that situation,you must use ',' as 'Placeholder' yet.
+              The Scale default is '1'.
 
-                The general expression style : section:displacement(Base,Index.Scale)
-                But Linux working on the Protect method,exclution for kernel programs all applications could only seen logic linear address.
-            So could not use the segment registers in that expression.
-                The calculation method : 
-                        The-real-address=Section_Reg*16+Base_Addres+Index*Scale+Displacement ;
-                    
-                Because the protect working mode,so use Base_Address,Index_Address,Scale,Displacement to accessing address.
-
-            Base_Address and Index_Address could is anyregister which is 32bit.
-            Scale could is the value 1,2,4,8.
-            Displacement is the Dec'Positive or Negative number.
-            And the Base_Addres and Index_Addres could only use ones of them,but at that situation,you must use ',' as 'Placeholder' yet.The 
-        Scale default is '1'.
-
-            According for the narration,the general usage like these : 
-
-                #    12(%EBX,%ESI,0x1)
-                #    (%EBX,%ESI,0x1)
-                #    (,%ESI,0x1)
-                #    -3(,%ESI,)
+            The general usage like these : 
+              12(%EBX,%ESI,0x1)
+              (%EBX,%ESI,0x1)
+              (,%ESI,0x1)
+              -3(,%ESI,)
             
-            #    Null parts value is 0,exclution 'Scale'
+              # Null parts value is 0,exclution 'Scale'
 
-            Absolute addressing : 
-                    
-                    M[Imm]        -->        movq    0x600639,%EAX
+        Absolute addressing : 
+          M[Imm] -->  movq        0x600639,%EAX
 
-            Registers cite>
+      Registers refer >
+        In AT&T assembly language,cite a Register must adding a prefix '%' in the front of Register-Name.
+        Like this : 
+          %EAX,%EBX,%SS,%CS,%ES...
+          #    %Reg -> Get data from Reg which would as operand.
+          #    (%Reg) -> Get data from Reg which would as an address to be accessing.
+          #    Case insenstive!
 
-                In AT&T assembly language,cite a Register must adding a prefix '%' in the front of Register-Name.
-                #    Like this : 
-                        %EAX,%EBX,%SS,%CS,%ES...
+    The CPUID instruction >
+      CPUID is a assembly instruction,use this instruction could requesting for processor information from CPU.CPUID use EAX register as 
+      the input register.Send another value to EAX to get another infos.
 
-                #    %Reg -> Get data from Reg which would as operand.
-                #    (%Reg) -> Get data from Reg which would as an address to be accessing.
+      EAX-Value            CPUID-Output
+      0                    Vendor-ID-string and the maxinum CPUID selction
+      1                    Processor type,serise,model,single-split-info
+      2                    Processor cache completing info
+      3                    Processor sequence number
+      4                    Cache completing(threads number,kernels number,physics attributes)
+      5                    Surveillance information
+      0x80000000           Extended Vendor-ID-string and the supported level
+      0x80000001           Extended processor type,serise,model,single-split-info
+      0x80000002 -- 0x80000004        Extended the name string or processor
 
-                #    Case insenstive!
-
-            
-        ---
-    
-        Sixth : The CPUID instruction>
-
-            CPUID is a assembly instruction,use this instruction could requesting for processor information from CPU.CPUID use EAX register as 
-        the input register.Send another value to EAX to get another infos.
-
-            EAX-Value            CPUID-Output
-
-            0                Vendor-ID-string and the maxinum CPUID selction
-            1                Processor type,serise,model,single-split-info
-            2                Processor cache completing info
-            3                Processor sequence number
-            4                Cache completing(threads number,kernels number,physics attributes)
-            5                Surveillance information
-            0x80000000            Extended Vendor-ID-string and the supported level
-            0x80000001            Extended processor type,serise,model,single-split-info
-            0x80000002--0x80000004        Extended the name string or processor
-
-            For example : 
-                #    Send 0x0 to EAX and then execute 'CPUID'.The data from returned by CPU.
-                
-                EBX :        The lowest 4 Bytes.
-                ECX :        The midly 4 Bytes.
-                EDX :        The highest 4 Bytes.
-
-        ---
-    ---
----
+      For example : 
+        # Send 0x0 to EAX and then execute 'CPUID'.The info returned by CPU.
+        EBX :        The lowest 4 Bytes.
+        ECX :        The midly 4 Bytes.
+        EDX :        The highest 4 Bytes.
 
 Instructions Set :
 
@@ -931,7 +800,7 @@ Instructions Set :
 
         IdecX    operand        //    operand--
 
-        #    These instructions often be using to None-Signed value.If you use them at Signed value,becareful the symbol'changing.
+        #    These instructions often be using to None-Signed value.If we use them at Signed value,becareful the symbol'changing.
         #    operand could is 8bit,16bit,32bit,Register or MemAddr-Data.
         #    'I' could is 'i(Signed)' or null.
         #    'X' could is 'b','w','l','q'.
@@ -961,7 +830,7 @@ Instructions Set :
             imul    source,destination        //    destination=source*destination
             imul    multiplier,source,destination    //    destination=source*multiplier(Immediate-Number)
 
-            Becareful,you must prevent calculation overflow when you doing calculate.
+            Becareful,you must prevent calculation overflow when we doing calculate.
 
 
         IdivX    source
@@ -1068,7 +937,7 @@ Instructions Set :
             Stack is the temporary memory space for program.Program could use some Stack-Instructions to accessing the Stack.CPU use SS Register
         as the Stack-Segment-Register,use ESP/SP as the TOP-Element pointer in the stack.But in linux,the protect working mode could not change Stack
         memory section with manual setting.Because when a program has been starting up,System will auto to distribute some memory space for this 
-        process.By the time,SS Register only saved a description of resource.If you changed SS,then Stack-Instruction will accessing other memory 
+        process.By the time,SS Register only saved a description of resource.If we changed SS,then Stack-Instruction will accessing other memory 
         space these is not own to currently process,so System will send process with a SIGSEGV(Segmention failed).
 
             Instructions    
@@ -1222,7 +1091,7 @@ Instructions Set :
             #    DF=0,ESI++,EDI++;DF=1,ESI--,EDI--.
 
             #    In the background,'cmp' use 'destination'-'source' and then only change EFLAGS-bits.
-            #    And you could use 'rep' prefix in the 'Compare string instructions'.Use 'REPE','REPNE','REPNZ','REPZ'.Do not use 'rep',
+            #    And we could use 'rep' prefix in the 'Compare string instructions'.Use 'REPE','REPNE','REPNZ','REPZ'.Do not use 'rep',
             # beacuse the 'rep' prefix only check counter value in the ECX.
 
         ---
@@ -1268,7 +1137,7 @@ Instructions Set :
 
             So,'IP' always point to next instruction.
             
-            The JUMP-Instructions could change 'CS' or 'IP' to jump the code-place where you want to jump.
+            The JUMP-Instructions could change 'CS' or 'IP' to jump the code-place where we want to jump.
 
             Jump was splited for three kinds :
 
@@ -1369,64 +1238,62 @@ Instructions Set :
 
             ---
 
-        #    Condition jump : 
+        Condition jump : 
+          The condition jump instructions all are as same as the jmp instruction,but they would check the EFLAGS before jump.And the 
+          condition jump only allows 'Shortly jump' and 'Nearly jump'.
 
-                The condition jump instructions all are as same as the jmp instruction,but they would check the EFLAGS before jump.And the 
-            condition jump only allows 'Shortly jump' and 'Nearly jump'.
-
-            At first,the 'CMP' instruction.
-
-                CMP    operand1,operand2    (operand2 must is a register)
+          At first,the 'CMP' instruction :
+            CMP    operand1,operand2    (operand2 must is a register)
 
             'CMP' instruction compare the two for operands.In the background,'cmp' do the work that 'operand2-operand1' but without change data.
-        The result will change the EFLAGS register,and then could use 'Condition Jump' to jump where.
+            The result will change the EFLAGS register,and then could use 'Condition Jump' to jump where.
 
-                TEST    operand1,operand2    (operand1=reg/mem/data,operand2=reg/mem)
+            TEST    operand1,operand2    (operand1=reg/mem/data,operand2=reg/mem)
             
             'TEST' instruction do logic operation for operand1 and operand2.Operand2 & Operand1,but without change actuly data,only change flags
-        register.
+            register.
 
             
-            Table of condition jump instructions : 
+          Table of condition jump instructions : 
 
             Instructions            Description(Jump)        EFLAGS
 
-            JA                above                CF=0 and ZF=0
-            JAE                above or equal            CF=0
-            JB                below                CF=1
-            JBE                below or equal            CF=1 or ZF=1
-            JC                'Carry'                CF=1
+            JA                      above                    CF = 0 AND ZF = 0
+            JAE                     above or equal           CF = 0
+            JB                      below                    CF = 1
+            JBE                     below or equal           CF = 1 OR ZF = 1
+            JC                      'Carry'                  CF = 1
 
-            JCXZ                CX==0
-            JECXZ                ECX==0
+            JCXZ                    jump short if CX = 0
+            JECXZ                   jump short if ECX = 0
+            JRCXZ                   jump short if RCX = 0
 
-            JE                equal                ZF=1
-            JG                greater                ZF=0 or SF=OF
-            JGE                greater or equal        SF=OF
-            JL                less                SF=1 or OF=1
-            JLE                less or equal            ZF=1 or SF=1 or OF=1
-            JNA                not greater            CF=1 or ZF=1
-            JNAE                not greater or equal        CF=1
-            JNB                not below            CF=0
-            JNBE                not below or equal        CF=0 or ZF=0
-            JNC                none 'Carry'            CF=0
-            JNE                not equal            ZF=0
-            JNG                not greater            ZF=1 or SF=1 or OF=1
-            JNGE                not greater or equal        SF=1 or OF=1
-            JNL                not less            SF=OF
-            JNLE                not less or equal        ZF=0 or SF=OF
-            JNO                none overflow            OF=0
-            JNP                none odd-even checking        PF=0
-            JNS                none signed            SF=0
-            JNZ                not zero            ZF=0
-            JO                overflowe            OF=1
-            JP                odd-even checking        PF=1
-            JPE                even '1'            PF=1
-            JPO                odd '1'                PF=0
-            JS                signed                SF=1
-            JZ                zero                ZF=1
+            JE                      equal                    ZF = 1
+            JG                      greater                  ZF = 0 OR SF = OF
+            JGE                     greater or equal         SF = OF
+            JL                      less                     SF = 1 OR OF = 1
+            JLE                     less or equal            ZF = 1 OR SF = 1 OR OF = 1
+            JNA                     not greater              CF = 1 OR ZF = 1
+            JNAE                    not greater or equal     CF = 1
+            JNB                     not below                CF = 0
+            JNBE                    not below or equal       CF = 0 OR ZF = 0
+            JNC                     none 'Carry'             CF = 0
+            JNE                     not equal                ZF = 0
+            JNG                     not greater              ZF = 1 OR SF = 1 OR OF = 1
+            JNGE                    not greater OR equal     SF = 1 OR OF = 1
+            JNL                     not less                 SF = OF
+            JNLE                    not less OR equal        ZF = 0 OR SF = OF
+            JNO                     none overflow            OF = 0
+            JNP                     none odd-even checking   PF = 0
+            JNS                     none signed              SF = 0
+            JNZ                     not zero                 ZF = 0
+            JO                      overflowe                OF = 1
+            JP                      odd-even checking        PF = 1
+            JPE                     even '1'                 PF = 1
+            JPO                     odd '1'                  PF = 0
+            JS                      signed                   SF = 1
+            JZ                      zero                     ZF = 1
 
-        ---
     
             #    Cycle
 
@@ -1491,17 +1358,14 @@ Instructions Set :
         #    In linux,interrupt process is split for two parts.The up parts and the down parts.Up-parts must finished work as quickly as well,the
          Down-parts could left and waiting for schedule.And interrput could be interrupted by other one interruption,interruption level spliting.
 
-        ---
-    ---
----
 
-Advanced Math Functions :
+Advanced Math Functinos :
         The FPU register stack :
-          FPU data registers are called R0--R7,they are linked together to form a stack.
+          FPU data registers are called R0--R7(each of them is 80 bit),they are linked together to form a stack.
           FPU register stack is circular,the last register in the stack links back to the first
           register in the stack.
 
-            +---> [    ST0    ] => R7       TOP => FPU control word register        ||
+            +---> [    ST0    ] => R7                                               ||
             |     [    ST1    ] => R6                                               VV
             |     [    ST2    ] => R5
             |     [    ST3    ] => R4
@@ -1510,8 +1374,12 @@ Advanced Math Functions :
             |     [    ST6    ] => R1
             +---> [    ST7    ] => R0
 
+            ! data register is considered to the top of the stack is defined in the FPU control word register,
+              the register will be named ST0,and other registers is referenced relative the top register.
             ! when push the ninth value into FPU stack,the stack pointer will wrap around to the
               first FPU register,and replace it with this new value,then an exception will be raised.
+            ! when we need to specify ST register in assembly program,must follow this style "%st(i)",where
+              'i' is the index.
 
         The FPU status,control,and tag registers :
           FPU status register >
@@ -1542,8 +1410,220 @@ Advanced Math Functions :
 
            store FPU status register :
              FSTSW        r/m16        store FPU status register into 16 bit register or memory location
-           load FPU status register :
-             FLDCW        m16          load FPU status register from a memory location
+
+          Control register >
+            total 16 bits :
+              0        invalid operation exception mask
+              1        denormal operand exception mask
+              2        zero divide exception mask
+              3        overflow exception mask
+              4        underflow exception mask
+              5        precision exception mask
+              6--7     reserved
+              8--9     precision control                    /* used for mathematical calculation within FPU
+                                                             * 00 => single-precision (24 bit)
+                                                             * 01 => unused
+                                                             * 10 => double-precision (53 bit)
+                                                             * 11 => double-extended-precision (64 bit) [default]
+                                                             */
+             10--11    rounding control                     /* how FPU rounds the results of floating-point calculations
+                                                             * 00 => round to nearest [default]
+                                                             * 01 => round down (toward negative infinity)
+                                                             * 10 => round up   (toward positive infinity)
+                                                             * 11= > round toward zero
+                                                             */
+             12        infinity control
+             13--15    reserved
+
+           store FPU control word :
+             FSTCW        m16
+
+           load FPU control register :
+             FLDCW        m16          load FPU control register from a memory location
+
+         Tag register >
+           used to identify the values within the eight 80-bit FPU data registers.
+           each tage value corresponds to a physical FPU register.
+
+           total 16 bits :
+             0--1        R0
+             2--3        R1
+             4--5        R2
+             6--7        R3
+             8--9        R4
+            10--11       R5
+            12--13       R6
+            14--15       R7
+
+            available value is one of the following :
+              00 => a valid double-extended-precision value
+              01 => a zero value
+              10 => a special floating-point value
+              11 => nothing(empty)
+
+        Basic Floting-Point Math :
+          FST        m32/m64/STx        copy ST0 to @operand
+             P                  /STx    copy ST0 to @operand and pop register stack
+
+          FLD        m32/m64/m80/STx    push @operand onto the FPU register stack
+
+          FADD       m32/m64            add @operand to ST0 and store result in ST0
+                     ST0, STx           add @operands and store result in ST0
+                     STx, ST0           STx := STx + ST0
+              P      STx, ST0           add @operands and store result in STx,pop register stack
+              P                         add ST0 and ST1,store result in ST1,pop register stack
+          FIADD      m32int/m16int      same but operates on integer
+
+          FDIV       m32/m64            ST0 := ST0 / @operand
+                     ST0, STx           ST0 := ST0 / STx
+                     STx, ST0           STx := STx / ST0
+              P      STx, ST0           STx := STx / ST0,pop register
+              P                         ST1 := ST1 / ST0,pop register
+
+          FIDIV      m32int/m16int      same,but operates on integer
+
+          /* reverse version,but result still stored in register */
+          FDIVR      m32/m64            
+                     ST0, STx
+                     STx, ST0
+               P     STx, ST0           STx := ST0 / STx,pop register
+               P                        ST1 := ST0 / ST1
+          FIDIVR     m32int/m16int      operates on integer
+
+          FMUL       m32/m64            ST0 *= @operand
+                     ST0, STx           ST0 *= STx
+                     STx, ST0           STx *= ST0
+              P      STx, ST0           STx *= ST0,pop register
+              P                         ST1 *= ST0,pop register
+          
+          FSUB       m32/m64            ST0 -= @operand
+                     ST0, STx           ST0 -= STx
+                     STx, ST0           STx -= ST0
+              P      STx, ST0           STx -= ST0,pop register
+              P                         ST1 -= ST0,pop register
+          FISUB      m32int/m16int      operates on integer
+
+          /* reversed version FSUB */
+          FSUBR      m32/m64            ST0 := @operand - ST0
+                     ST0, STx           ST0 := STx - ST0
+                     STx, ST0           STx := ST0 - STx
+               P     STx, ST0           STx := ST0 - STx,pop register
+               P                        ST1 := ST0 - ST1,pop register
+          FISUBR     m32int/m16int      operates on integer
+
+        Advanced Floting-Point Math :
+          F2XM1                         ST0 := (2^ST0) - 1
+          FABS                          ST0 := ST0 < 0 ? ST0 * -1 : ST0
+          FCHS                          ST0 := ST0 * -1
+          FCOS                          ST0 := cos(ST0)
+          FPATAN                        replace ST1 with arctan(ST1 / ST0),pop register
+          FPREM                         ST0 := ST0 % ST1
+          FPREM1                        similar to FPREM,but obtain IEEE remainder
+          FPTAN                         replace ST0 with its approximate tangent,and push 1 to FPU stack
+          FRNDINT                       round ST0 to integer
+          FSCALE                        scale ST0 by ST1 => ST0 := ST0^ST1
+          FSIN                          ST0 := sin(ST0)
+          FSINCOS                       compute the sine and cosine of ST0;replace ST0 with
+                                        the approximate sine,and push the approximate cosine
+                                        onto the register stack
+          FSQRT                         ST0 := sqrt(ST0)
+          FYL2X                         ST1 := ST1 * log2(ST0)
+          FYL2XP1                       ST1 := ST1 * log2(ST0 + 1.0),pop register
+
+        Floating-Point Conditional Branches :
+          FCOM       m32/m64/STx        compare ST0 with @operand
+                                        comapre ST0 with ST1
+              P      m32/m64/STx        compare ST0 with @operand,pop register
+                                        compare ST0 with ST1,pop register
+              PP                        compare ST0 with ST1,pop register twice
+                                        CASE :
+                                          >        C3, C2, C0 := 000
+                                          <        C3, C2, C0 := 001
+                                          =        C3, C2, C0 := 100
+                                          /* C1 always set to 0 */
+
+          FTST                          comapre ST0 with 0.0
+                                        CASE :
+                                          >        C3, C2, C0 := 000
+                                          <        C3, C2, C0 := 001
+                                          =        C3, C2, C0 := 100
+                                          unordered              000
+
+          FCOMI      ST0, STx           compare ST0 with STx and set status flags accordingly
+               P     ST0, STx
+          FUCOMI     ST0, STx           compare ST0 with STx,check for ordered values,and
+                                        set status flags accordingly
+                P    ST0, STx
+                                        CASE :
+                                          >        ZF, PF, CF := 000
+                                          <        ZF, PF, CF := 001
+                                          =        ZF, PF, CF := 100
+
+          FCMOVB     ST0, STx           move ST0 to STx if CF = 1
+               E     ST0, STx                            if ZF = 1
+               BE    ST0, STx                            if CF = 1 OR ZF = 1
+               U     ST0, STx                            if PF = 1
+               NB    ST0, STx                            if CF = 0
+               NE    ST0, STx                            if ZF = 0
+               NBE   ST0, STx                            if CF = 0 AND ZF = 0
+               NUB   ST0, STx                            if PF = 0
+                                        /* B: below
+                                         * E: equal
+                                         * U: unordered
+                                         * N: not
+                                         */
+
+        Saving and Restoring the FPU state :
+          the MMX technology utilizes the FPU data registers as MMX data registers,storing 80-bit packed integer
+          values for calculations.when we used FPU and MMX in a program,we must prevent data corrupt.
+          !! BECAUSE MM0--MM7 ARE THE REGISTERS RENAMED FROM ST0--ST7.
+        
+          FSTENV        m14/m28 bytes   store FPU environment to m14bytes or m28bytes after checking
+                                        for pending unmasked floating-point exceptions.then mask all
+                                        floating-point exceptions
+          FLDENV        m14/m28 bytes   load FPU environment from m14bytes or m28bytes
+
+          /* environment only */
+
+          the environment contains :
+            > control register
+            > status register
+            > tag register
+            > FPU instruction pointer offset
+            > FPU data pointer
+            > FPU last opcode executed
+
+          FSAVE         m94/m108 bytes  store FPU state to m94bytes or m108bytes after checking for
+                                        pending unmasked floating-point exceptions,then re-initialize the FPU
+          FRSTOR        m94/m108 bytes  load FPU state from m94bytes or m108bytes
+
+        Waiting VS Nonwaiting Instructions in FPU :
+          nonwaiting FPU instructions usually is start with "FN".the terms waiting and nonwaiting refer to how
+          the instructions handle floating-point exceptions.
+          ! it is not all instructions have nonwaitingversion.
+
+          the waiting version instructions,before execute the instruction,must waiting for the present
+          floating-point exceptions go away;and the nonwaiting version does not care it,they allow the
+          program to save or reset the current FPU state without dealing with any pending exceptions.
+
+          FNCLEX                clear floating-point exception flags after checking for pending unmasked
+                                floating-point exceptions
+          FNINIT                initialize FPU after checking for pending unmasked floating-point exceptions
+
+          /* nonwaiting version for FSTCW, FSTENV, FSTSW, FSAVE */
+          FNSTCW        
+          FNSTENV
+          FNSTSW
+          FNSAVE
+
+        Other FPU instructions :
+          FWAIT                 checking pending unmasked floating-point exceptions
+          FNOP                  null operation
+          
+          
+          
+          
+
 
 Assembly Functions : 
 
@@ -1574,7 +1654,7 @@ Assembly Functions :
             #    Save it in a global variable.
 
         
-        When you defining a function,must make some constraint.
+        When we defining a function,must make some constraint.
         The constraint could contain these : 
 
                 #    The arguments how to send to function.If use Stack,what is the order of pushing?
@@ -1759,7 +1839,7 @@ Assembly Library :
 
         //    This is 32bit model C program register usage,but on 64bit model,R8~R15 registers would be using(Pay a notice).
 
-        So,if you want to use assembly library in C program,must attend this constraint.At first determine the temporarly to be used registers,and 
+        So,if we want to use assembly library in C program,must attend this constraint.At first determine the temporarly to be used registers,and 
     then save the old values,before return restore them.
 
         The C program sends parameters the order is right to left : _func_(a,b,c);
@@ -1868,7 +1948,7 @@ Assembly Library :
         For using Assembly functions in C++ : 
 
             The default situation in C++,all function use the C++ 'Name and Call constraint' to translating.C++ function support to the overload,
-        but C function do not support to overload.If you want use Assembly Function in C++ must adding the part :
+        but C function do not support to overload.If we want use Assembly Function in C++ must adding the part :
 
             extern "C" {
 
@@ -2132,7 +2212,7 @@ Inline Assembly :
 
             ###
 
-            !    Cite Placeholder>
+            !    refer Placeholder>
 
                 If the Inline ASM,input and output use the same variable,can assign constraint value with a 'PlaceHolder'.
 

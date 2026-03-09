@@ -232,9 +232,13 @@ CPU primary parts :
         MMX :
           'Multimedia extension' was designed for support to 'Single Instruction,Multiple Data,SIMD'.
           MMX enviornment have three new data type of integer : 
-            64bit packing byte integer.
-            64bit packing word integer.
-            64bit packing double-words integer.
+            64-bit packed byte integers [ 8 byte integers ]
+            64-bit packed word integers [ 4 word integers ]
+            64-bit packed doubleword integers [ 2 dword integers ]
+
+          ! if we want to move data into MMX,we can prepare data in memory,and pass address of the data
+            as the first operand to 'mov'.
+            # we refer to the register,should follow the style "%mmX",where 'X' is the index.
 
         SSE : 
           Power up floating performance of  '3DGraph' and 'Dynamic video' and 'Video task'.
@@ -242,11 +246,13 @@ CPU primary parts :
           these new features,and SSE had introduced new addend instructions as well.
 
           Pentium4 (SSE2) introduced five new data type : 
-            128bit packing double-precision float data.
-            128bit packing byte integer.
-            128bit packing word integer.
-            128bit packing double-words integer.
-            128bit packing four-words integer.
+            128-bit packed double-precision float data [ 2 double precision floating-point ]
+            128-bit packed byte integer [ 16 byte integers ]
+            128-bit packed word integer [ 8 byte integers ]
+            128-bit packed doubleword integer [ 4 dword integers ]
+            128-bit packed quadword integer. [ 2 qword integers ]
+
+          ! for move data into XMM,we should follow the way that move data into MMX.
 
         Hyberthreading : 
           This feature make IA-32 CPU could processing multi-processes at same time.Advantage would indicating on multi-task OS.
@@ -485,16 +491,16 @@ AT&T Assembly basic explanation :
            In assembly the Opcode is only for needed,another Opcode have another feature.
       2> I-prefix : 
            The prefix features class : 
-             1.    Lock-prefix and Repeat-prefix.
-                   Lock-prefix indicate to the instruction would lock up share memory zone.
-                   Repeat-prefix always used to repeat instruction operation.
-             2.    Section-override-prefix and Branch-prompt-prefix.
-                   Section-override-prefix could cover to the instruction has been defined segment-register.
-                   Branch-prompt-prefix try to provides the condition-jump-path-clue is possible.
-             3.    Operand-Length-Cover-Prefix.
-                   Notice to processor that program would be switching this Opcode between in 16bit and 32bit.
-             4.    Address-Length-Cover-Prefix.
-                   Notice to processor that program would be switching address-type between in 16bit and 32bit.
+             1. Lock-prefix and Repeat-prefix.
+                Lock-prefix indicate to the instruction would lock up share memory zone.
+                Repeat-prefix always used to repeat instruction operation.
+             2. Section-override-prefix and Branch-prompt-prefix.
+                Section-override-prefix could cover to the instruction has been defined segment-register.
+                Branch-prompt-prefix try to provides the condition-jump-path-clue is possible.
+             3. Operand-Length-Cover-Prefix.
+                Notice to processor that program would be switching this Opcode between in 16bit and 32bit.
+             4. Address-Length-Cover-Prefix.
+                Notice to processor that program would be switching address-type between in 16bit and 32bit.
       3> ModR : 
            Some Opcodes needs modifier for understant the registers and memory-position was involed by this usage.
            Modifier was contained in three for values indenpendy.
@@ -532,7 +538,7 @@ AT&T Assembly basic explanation :
              push       %EAX          # Push the element in EAX to stack.
              pop        %EBX          # Pop the top element in stack to EAX.
              iaddl      $-20,%EAX     # Signed adding,EAX=%EAX+(-20);this Opcode'operand length is double-words(l,4B).
-             sub        $2,%EAX       # None signed division,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
+             sub        $2,%EAX       # None signed subtract,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
 
     The data types defined by GNU-Assembler >
       Commands            Type
@@ -653,6 +659,108 @@ AT&T Assembly basic explanation :
         EBX :        The lowest 4 Bytes.
         ECX :        The midly 4 Bytes.
         EDX :        The highest 4 Bytes.
+
+Conversions :
+    conversion instruction is used to covert data represented in one data type into another data type.
+
+    instructions :
+      /* all of these instructions are work on signed integer */
+
+      /* dword to double precision */
+      CVTDQ2PD        XMM2/m64, XMM1        convert two packed signed dword integers from @source
+                                            to two packed double precision floting-point values in XMM1
+     V                XMM2/m64, XMM1        same effect as previous
+     V                XMM2/m128, YMM1       convert two four packed signed dword integers from @source
+                                            to four packed double precision floating-point values in YMM1
+     V                XMM2/m64/m32bcst, XMM1 {k1}{z}
+                                            covert two packed signed dword integers from @source to
+                                            eight packed double precision floating-point value in XMM1 with
+                                            writemask @k1
+                                            /* destination operand conditionally updated with writemask @k1
+                                             * {z} => zeroing masking
+                                             * {k1} => the bit has number 1 in opmask register
+                                             * {k1} : update destination only if %k1 bit is 1
+                                             * {k1}{z} : elements not in %k1 become 0
+                                             */
+     V                XMM2/m128/m32bcst, YMM1 {k1}{z}
+                                            convert four packed signed dword integers from @source to
+                                            four packed double precision floating-point values in YMM1 with
+                                            writemask @k1
+     V                YMM2/m256/m32bcst, ZMM1 {k1}{z}
+                                            convert eight packed signed dword integers from @source to
+                                            eight packed double precision floating-point values in ZMM1 with
+                                            writemask @k1
+
+      /* dword to single precision */
+      CVTDQ2PS        XMM2/m128, XMM1       convert four packed signed dword integers from @source to four
+                                            packed single precision floating-point values in XMM1
+     V                XMM2/m128, XMM1       4 packed dword to 4 packed single precision in XMM1
+     V                YMM2/m256, YMM1       8 packed dword to 8 packed single precision in YMM1
+     V                XMM2/m128/m32bcst, XMM1 {k1}{z}       writemask version
+     V                YMM2/m256/m32bcst, YMM1 {k1}{z}       writemask version
+     V                ZMM2/m512/m32bcst{er}, ZMM1 {k1}{z}   16 packed dword to 16 packed single precision in ZMM1,
+                                                             with writemask @k1
+
+      /* double precision to dword */
+      CVTPD2DQ        XMM2/m128, XMM1       2 packed double precision to 2 dword in XMM1
+     V                XMM2/m128, XMM1       2 packed double precision to 2 dword in XMM1
+     V                YMM2/m256, XMM1       4 packed double precision to 4 dword in XMM1
+     V                XMM2/m128/m64bcst, XMM1 {k1}{z}       writemask version
+     V                YMM2/m256/m64bcst, XMM1 {k1}{z}       writemask version
+     V                ZMM2/m512/m64bcst{er}, YMM1 {k1}{z}   writemask version,8 packed double precision to 8 dword
+                                                            in YMM1
+
+      CVTPD2PI        XMM/m128, MMi         convert 2 packed double precision floating-point values from second
+                                            @operand to 2 packed dword in MMi(a MMX register)
+
+      /* double precision to single precision */
+      CVTPD2PS        XMM2/m128, XMM1       convert 2 packed double precision floating-point values in second
+                                            @operand to 2 single precision floating-point values in XMM1
+     V                XMM2/m128, XMM1       2 => 2
+     V                YMM2/m256, XMM1       4 => 4
+     V                XMM2/m128/m64bcst, XMM1 {k1}{z}      2 => 2,writemask @k1
+     V                YMM2/m256/m64bcst, XMM1 {k1}{z}      4 => 4,writemask @k1
+     V                ZMM2/m256/m64bcst{er} YMM1 {k1}{z}   8 => 8,writemask @k1
+
+      /* dword to double precision */
+      CVTPI2PD        MMi/m64, XMM          convert 2 packed dword from @source to 2 packed
+                                            double precision floating-point values in XMMi
+      CVTPI2PS        MMi/m64, XMM          convert 2 dword from @source to 2 packed single precision
+                                            floating-point values in XMMi
+
+      CVTPS2DQ        XMM2/m128, XMM1       convert 4 packed single precision floating-point values from
+                                            @source to 4 packed dword values in XMM1
+     V                XMM2/m128, XMM1       4 => 4
+     V                YMM2/m256, YMM1       8 => 8
+     V                XMM2/M128/m32bcst, XMM1 {k1}{z}      writemask version
+     V                XMM2/m256/m32bcst, YMM1 {k1}{z}      writemask version
+     V                ZMM2/m512/m32bcst{er}, ZMM1 {k1}{z}  16 => 16,writemask version
+
+      CVTPS2PD        XMM2/m64, XMM1        convert 2 packed single precision floating-point values in
+                                            @source to 2 packed double precision floating-point
+                                            values in XMM1
+     V                XMM2/m64, XMM1        2 => 2
+     V                XMM2/m128, YMM1       4 => 4
+     V                XMM2/m64/m32bcst, XMM1 {k1}{z}       writemask version
+     V                XMM2/m128/m32bcst, YMM1 {k1}{z}      writemask version
+     V                YMM2/m256/m32bcst{sae}, ZMM1 {k1}{z} 8 => 8,writemask version
+
+      CVTPS2PI        XMM/m64, MMi          convert 2 packed single precision floating-point values in
+                                            @source to 2 packed dword in MMi
+
+      /* the following are truncation version */
+      CVTTPD2PI       XMM/m128, MMi         convert 2 packed double precision floating-point values
+                                            from @source to 2 packed dword in MMi using
+                                            truncation -- when a conversion is inexact,a truncated
+                                            (round toward zero) result is returned.
+      CVTTPD2DQ       XMM2/m128, XMM1 
+      ...             ...
+
+      CVTTPS2DQ       XMM2/m128, XMM1 
+      ...             ...
+
+      CVTTPS2PI       XMM/m64, MMi 
+        
 
 Instructions Set :
 
@@ -1157,13 +1265,13 @@ Instructions Set :
 
             jmp    location
 
-            call    location
+            call   location
 
             ret
 
             int    Int_Num        //    This is an interrupt instruction.
 
-            into    Int_Num        //    This is an intertupt instruction.
+            into   Int_Num        //    This is an intertupt instruction.
 
             
             #    jmp    location
@@ -1468,46 +1576,46 @@ Advanced Math Functinos :
           FLD        m32/m64/m80/STx    push @operand onto the FPU register stack
 
           FADD       m32/m64            add @operand to ST0 and store result in ST0
-                     ST0, STx           add @operands and store result in ST0
-                     STx, ST0           STx := STx + ST0
-              P      STx, ST0           add @operands and store result in STx,pop register stack
+                     STx, ST0           add @operands and store result in ST0
+                     ST0, STx           STx := STx + ST0
+              P      ST0, STx           add @operands and store result in STx,pop register stack
               P                         add ST0 and ST1,store result in ST1,pop register stack
           FIADD      m32int/m16int      same but operates on integer
 
           FDIV       m32/m64            ST0 := ST0 / @operand
-                     ST0, STx           ST0 := ST0 / STx
-                     STx, ST0           STx := STx / ST0
-              P      STx, ST0           STx := STx / ST0,pop register
+                     STx, ST0           ST0 := ST0 / STx
+                     ST0, STx           STx := STx / ST0
+              P      ST0, STx           STx := STx / ST0,pop register
               P                         ST1 := ST1 / ST0,pop register
 
           FIDIV      m32int/m16int      same,but operates on integer
 
           /* reverse version,but result still stored in register */
           FDIVR      m32/m64            
-                     ST0, STx
                      STx, ST0
-               P     STx, ST0           STx := ST0 / STx,pop register
+                     ST0, STx
+               P     ST0, STx           STx := ST0 / STx,pop register
                P                        ST1 := ST0 / ST1
           FIDIVR     m32int/m16int      operates on integer
 
           FMUL       m32/m64            ST0 *= @operand
-                     ST0, STx           ST0 *= STx
-                     STx, ST0           STx *= ST0
-              P      STx, ST0           STx *= ST0,pop register
+                     STx, ST0           ST0 *= STx
+                     ST0, STx           STx *= ST0
+              P      ST0, STx           STx *= ST0,pop register
               P                         ST1 *= ST0,pop register
           
           FSUB       m32/m64            ST0 -= @operand
-                     ST0, STx           ST0 -= STx
-                     STx, ST0           STx -= ST0
-              P      STx, ST0           STx -= ST0,pop register
+                     STx, ST0           ST0 -= STx
+                     ST0, STx           STx -= ST0
+              P      ST0, STx           STx -= ST0,pop register
               P                         ST1 -= ST0,pop register
           FISUB      m32int/m16int      operates on integer
 
           /* reversed version FSUB */
           FSUBR      m32/m64            ST0 := @operand - ST0
-                     ST0, STx           ST0 := STx - ST0
-                     STx, ST0           STx := ST0 - STx
-               P     STx, ST0           STx := ST0 - STx,pop register
+                     STx, ST0           ST0 := STx - ST0
+                     ST0, STx           STx := ST0 - STx
+               P     ST0, STx           STx := ST0 - STx,pop register
                P                        ST1 := ST0 - ST1,pop register
           FISUBR     m32int/m16int      operates on integer
 
@@ -1549,24 +1657,24 @@ Advanced Math Functinos :
                                           =        C3, C2, C0 := 100
                                           unordered              000
 
-          FCOMI      ST0, STx           compare ST0 with STx and set status flags accordingly
-               P     ST0, STx
-          FUCOMI     ST0, STx           compare ST0 with STx,check for ordered values,and
+          FCOMI      STx, ST0           compare ST0 with STx and set status flags accordingly
+               P     STx, ST0
+          FUCOMI     STx, ST0           compare ST0 with STx,check for ordered values,and
                                         set status flags accordingly
-                P    ST0, STx
+                P    STx, ST0
                                         CASE :
                                           >        ZF, PF, CF := 000
                                           <        ZF, PF, CF := 001
                                           =        ZF, PF, CF := 100
 
-          FCMOVB     ST0, STx           move ST0 to STx if CF = 1
-               E     ST0, STx                            if ZF = 1
-               BE    ST0, STx                            if CF = 1 OR ZF = 1
-               U     ST0, STx                            if PF = 1
-               NB    ST0, STx                            if CF = 0
-               NE    ST0, STx                            if ZF = 0
-               NBE   ST0, STx                            if CF = 0 AND ZF = 0
-               NUB   ST0, STx                            if PF = 0
+          FCMOVB     STx, ST0           move STx to ST0 if CF = 1
+               E     STx, ST0                           if ZF = 1
+               BE    STx, ST0                           if CF = 1 OR ZF = 1
+               U     STx, ST0                           if PF = 1
+               NB    STx, ST0                           if CF = 0
+               NE    STx, ST0                           if ZF = 0
+               NBE   STx, ST0                           if CF = 0 AND ZF = 0
+               NUB   STx, ST0                           if PF = 0
                                         /* B: below
                                          * E: equal
                                          * U: unordered
@@ -1619,10 +1727,6 @@ Advanced Math Functinos :
         Other FPU instructions :
           FWAIT                 checking pending unmasked floating-point exceptions
           FNOP                  null operation
-          
-          
-          
-          
 
 
 Assembly Functions : 
@@ -2325,95 +2429,88 @@ File Operation In Assembly :
 ---
 
 Floating Operation : 
+    Floating style>
+      1> Science and Technology Law.    (cocfficient/mantissa + exponent)
+         3.14 * 10^5
+      2> Decimal.
+         3.141321
 
-        Floating style>
+    Binary Floating >
+      Use binary science method.All cocfficient and exponent will be changing to binary.
 
-            1>    Science and Technology Law.    (cocfficient/mantissa + exponent)
-            2>    Decimal.
+      The general map :
+        binary            decimal fraction    decimal number
+        0.1               1 / 2               0.5
+        0.01              1 / 4               0.25
+        0.001             1 / 8               0.125
+        0.0001            1 / 16              0.0625
+        0.00001           1 / 32              0.03125
+        0.000001          1 / 64              0.015625
 
-            1 : 3.14 * 10^5
-            2 : 3.141321
+        10.101            2+1 / 2+1 / 8       2.625
+        10011.001         19+1 / 8            19.125
+        10110.1101        22+1 / 2+1 / 4+1 / 16    22.8125
+        1101.011          13+1 / 4+1/8             13.375
 
-            #    Binary Floating>
+        IEEE Standard 754 floating >
+          A floating data would be spliting to three parts : 
+            1> Symbol (Positive or Negative)
+            2> Effected number
+            3> Exponent
 
-                Use binary science method.All cocfficient and exponent will be changing to binary.
+          Saving method : 
+            [ sign | exponent | significant ]
 
-                The general map :
+            single precision : 32 bits
+            double precision : 64 bits
 
-                binary            decimal fraction    decimal number
-
-                0.1            1/2            0.5
-                0.01            1/4            0.25
-                0.001            1/8            0.125
-                0.0001            1/16            0.0625
-                0.00001            1/32            0.03125
-                0.000001        1/64            0.015625
-
-                ###
-
-                10.101            2+1/2+1/8        2.625
-                10011.001        19+1/8            19.125
-                10110.1101        22+1/2+1/4+1/16        22.8125
-                1101.011        13+1/4+1/8        13.375
-
-        IEEE Standard 754 floating>
-
-            A floating data would be spliting to three parts : 
-
-            1>    Symbol (Positive or Negative)
-            2>    Effected number
-            3>    Exponent
-
-            Saving method : 
-
-                |   |            |        |    
-                Symbol        Exponent    Cocfficient
-
-            Single presion : 32bit
-            Double presion : 64bit
-
-
-        FPU Instructions : 
-
-        Instruction            Description
+      Some FPU Instructions : 
+        Instruction               Description
 
         fldX    source            Send a floating data from source to a FPU register
-        fstX    destination        Get the top data in the FPU register Stack
+        fstX    destination       Get the top data in the FPU register Stack
 
-        #    'X' : 's'->single presion ; 'l'->double presion.
+        # 'X' : 's'->single presion ; 'l'->double presion.
 
-        #    Present FPU operations
+        # Present FPU operations
 
         FLD1                Push +1.0 to FPU Stack
-        FLDL2T                Push log2_10 to FPU Stack
-        FLDL2E                Push log2_e to FPU Stack
-        FLDPI                Push value of 'pi' to FPU Stack
-        FLDLG2                Push log10_2 to FPU Stack
-        FLDLN2                Push loge_2 to FPU Stack
+        FLDL2T              Push log2_10 to FPU Stack
+        FLDL2E              Push log2_e to FPU Stack
+        FLDPI               Push value of 'pi' to FPU Stack
+        FLDLG2              Push log10_2 to FPU Stack
+        FLDLN2              Push loge_2 to FPU Stack
         FLDZ                Push +0.0 to FPU Stack
 
+        # SSE Floating
 
-        #    SSE Floating
+        MOVAPS              Send a packed data it contain four single-presion floatings with aligned to XMM register or memory
+        MOVUPS              Send a packed data it contain four single-presion floatings with not aligned to XMM register or memory
+        MOVSS               Send a single-presion floating to the memory or below double-words of register
+        MOVLPS              Send two single-presion floatings to the memory or the below four-words of register
+        MOVHPS              Send two single-presion floatings to the memory or the hight four-words of register
+        MOVLHPS             Send two single-presion floatings from the below four-words to the hight four-words
+        MOVHLPS             Send two single-presion floatings from the hight four-words to the below four-words
 
-        MOVAPS                Send a packed data it contain four single-presion floatings with aligned to XMM register or memory
-        MOVUPS                Send a packed data it contain four single-presion floatings with not aligned to XMM register or memory
-        MOVSS                Send a single-presion floating to the memory or below double-words of register
-        MOVLPS                Send two single-presion floatings to the memory or the below four-words of register
-        MOVHPS                Send two single-presion floatings to the memory or the hight four-words of register
-        MOVLHPS                Send two single-presion floatings from the below four-words to the hight four-words
-        MOVHLPS                Send two single-presion floatings from the hight four-words to the below four-words
+        # SSE2 Floating
 
-        #    SSE2 Floating
+        MOVAPD              Send two double-presion floatings with aligned to XMM register or memory
+        MOVUPD              Send two double-presion floatings with not aligned to XMM register or memory
+        MOVSD               Send a double-presion floating to the memory or the below four-words of register
+        MOVHPD              Send two double-presion floating to the memory or the hight four-words of register
+        MOVLPD              Send two double-presion floating to the memory or the below four-words of register
 
-        MOVAPD                Send two double-presion floatings with aligned to XMM register or memory
-        MOVUPD                Send two double-presion floatings with not aligned to XMM register or memory
-        MOVSD                Send a double-presion floating to the memory or the below four-words of register
-        MOVHPD                Send two double-presion floating to the memory or the hight four-words of register
-        MOVLPD                Send two double-presion floating to the memory or the below four-words of register
+        # SSE3 Floting
+        MOVSHDUP            move a 128 bit value from memory or an XMM register,duplicate the second and fourth
+                            32-bit data elements.
+                            # movshdup DCBA => DDBB 128-bit packed single precision floating-point value
+        MOVSLDUP            move a 128 bit value from memory or an XMM register,duplicate the first and third
+                            32-bit data elements.
+                            # movsldup DCBA => CCAA 128-bit packed single precision floting-point value
+        MOVDDUP             move 64 -bit double-precision floating-point value from memory or an XMM register,
+                            duplicate it into a 128-bit XMM register.
+                            # mvddup A => AA 128-bit packed double-precision
 
-        ---
-    ---
----
 
 x86_64 FrameWork :
 
@@ -2632,18 +2729,48 @@ x86_64 FrameWork :
             bl    ->    single-byte to double words
             wl    ->    word to double words
 
+BCD - Binary Coded Decimal :
+    in BCD,each BCD value is an unsigned 8-bit integer,with a value range of 0 -- 9.the 8-bit values higher than 9
+    are considered invalid in BCD.
 
----    
+                     highest             lowest       
+            111 => [ 00000001, 00000001, 00000001 ]
+                     1         1         1          => decimal
+    and because the number in range [0, 9] can be represented by 5-bit,thus we can use fewer bytes to represent large
+    number,this is packed BCD.
+    ! we must align number of bits to multiple of 2,thus if we want to represent number 9,must use 6 bits.
+
+                  1byte    1 byte     1 byte
+                     ..||<-------->||<------>|
+            1489 => [ 0001, 0100, 1000, 010001 ]
+                      1     4     8     9
+
+    FPU BCD :
+      FPU registers can be used for BCD arithmetic operations within the FPU.
+      in ST register,the BCD values are stored using the lower 9bytes,using packed BCD format,two BCD values per byte.
+      the last byte of the FPU register is mostly unused,with the exception of the highest-order bit,this bit is
+      used as a sign indicator.
+
+                              9 bytes
+                  |<------------------------------->|
+        [ 0 | ... | B18 B17 | B16 B15 | ... | B2 B1 ]
+         79       |<------->|                     0
+                    1 byte
+
+      instructions :
+        FBLD        m80BCD        convert BCD value to floating-point and push onto the FPU stack
+        FBSTP       m80BCD        store ST0 in @operand and pop register
+
 
 Somethings>
-  jmp [label]f/b => jmp to [label] "f"->search forward "b"->search backward
-  e.g.
-    jmp 1f
-    ...
-    1:      #  jmp 1f
-    ...
-    2:      #  jmp 2b
-    ...
-    jmp 2b
+    jmp [label]f/b => jmp to [label] "f"->search forward "b"->search backward
+    e.g.
+      jmp 1f
+      ...
+      1:      #  jmp 1f
+      ...
+      2:      #  jmp 2b
+      ...
+      jmp 2b
 
 

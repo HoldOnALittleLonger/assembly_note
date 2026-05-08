@@ -505,7 +505,7 @@ AT&T Assembly basic explanation :
            Some Opcodes needs modifier for understant the registers and memory-position was involed by this usage.
            Modifier was contained in three for values indenpendy.
            #    Modifier(ModR/M) => Address accessing mode explanation.
-           #    SIB => Scale,Index,Base_Address.
+           #    SIB => Scale, Index, Base_Address.
            #    Address_Offset => one or two or four for address displacement Byte.
 
            ModR/M >
@@ -537,7 +537,7 @@ AT&T Assembly basic explanation :
              mov        $0x32,%EAX    # Move(Send) 0x32 to register EAX.
              push       %EAX          # Push the element in EAX to stack.
              pop        %EBX          # Pop the top element in stack to EAX.
-             iaddl      $-20,%EAX     # Signed adding,EAX=%EAX+(-20);this Opcode'operand length is double-words(l,4B).
+             iaddl      $-20,%EAX     # Signed adding,EAX = %EAX + (-20);this Opcode'operand length is double-words(l,4B).
              sub        $2,%EAX       # None signed subtract,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
 
     The data types defined by GNU-Assembler >
@@ -592,7 +592,7 @@ AT&T Assembly basic explanation :
 
     Data and Address accessing and Registers refer >
       Immediate number : 
-        'ImmN' always would as the Immediate number used in the instrcutions.
+        'ImmN' always would as the Immediate number used in the instructions.
         '11','0x11','012','0B00001111' and more all are 'Immediate numbers',in AT&T,if we want use a ImmN in a instruction,must to adding a 
         prefix '$'.Like this : $0x12,$12,$033,$0B10010011 ...
 
@@ -606,30 +606,46 @@ AT&T Assembly basic explanation :
               Data element length
               Index_Address to Determinding for the element
 
-            The general expression style : section:displacement(Base,Index.Scale)
-              But Linux working on the Protect method,exclution for kernel programs all applications could only seen logic linear address.
+            The general expression style : Section:Offset(Base, Index, Scale)
+              But Linux working on the Protect method,exclution for kernel programs all applications could only seen linear address.
               So could not use the segment registers in that expression.
 
             The calculation method : 
               The-real-address = Section_Reg * 16 + Base_Addres + Index * Scale + Offset
                     
               Because the protect working mode,so use Base_Address,Index_Address,Scale,Offset to access to memory location.
-              Base_Address and Index_Address could is anyregister which is 32bit.
-              Scale could is the value 1,2,4,8.
+              Base_Address and Index_Address could is any 32bits register.
+              Scale could is the value 1, 2, 4, 8.
               Offset is the Decimal Positive or Negative number.
-              And the Base_Addres and Index_Addres could only use ones of them,but at that situation,you must use ',' as 'Placeholder' yet.
+              And the Base_Addres and Index_Addres can use only one of them,but at that situation,',' still needed as placeholder.
               The Scale default is '1'.
 
-            The general usage like these : 
-              12(%EBX,%ESI,0x1)
-              (%EBX,%ESI,0x1)
-              (,%ESI,0x1)
-              -3(,%ESI,)
+            The general usage like the following :
+              12(%EBX, %ESI, 0x1)        # des = %ebx + %esi * 0x01 + 12
+              (%EBX, %ESI, 0x1)          # des = %ebx + %esi * 0x01 + 0
+              (, %ESI, 0x1)              # des = 0x00 + %esi * 0x01 + 0
+              -3(, %ESI, )               # des = 0x00 + %esi * 0x01 + (-3)
             
               # Null parts value is 0,exclution 'Scale'
 
         Absolute addressing : 
           M[Imm] -->  movq        0x600639,%EAX
+
+        The 'lea' instruction :
+          LEA        mem, r16/r32/r64        load effective address
+
+          this instruction computes the effective address of the first
+          operand,and load it into the destination register(second operand).
+                  .section .bss
+                  .comm local_array, 8        # array with size is 8 bytes.
+
+                  leaq    local_array + 2, %r8    # load address local_array + 2 to r8
+                                                  # suppose local_array is 0x00f204
+                                                  # effective address is 0x00f206,it is
+                                                  # the third element's address in this
+                                                  # array,suppose data length is 1 byte.
+                  leaq    local_array, %r8        # same as "local_array + 2".
+                  leaq    2(%r8), %r8
 
       Registers refer >
         In AT&T assembly language,cite a Register must adding a prefix '%' in the front of Register-Name.
@@ -1278,7 +1294,7 @@ Instructions Set :
 
                 On Intel-Assembly,jmp has the syntax : 
 
-                    jmp short location      #  eip = eip + displacement{8bits}<range [-127, +128]
+                    jmp short location      #  eip = eip + offset{8bits}<range [-127, +128]
                     jmp near ptr location
                     jmp far ptr location
 
@@ -1832,7 +1848,7 @@ Assembly Functions :
             The works of 'leave' instruction :
     
                 movq    %RBP,%RSP
-                pop    %RBP
+                pop     %RBP
 
         #    Using independent function files : 
 
@@ -2351,8 +2367,8 @@ Inline Assembly :
                 
                     asm(
                         "imull    %[Value1],%[Value2]"
-                        : %[Value2] "r="(data2)
-                        : %[Value1] "r"(data1),"0"(data2)):
+                        : [Value2] "r="(data2)
+                        : [Value1] "r"(data1),"0"(data2)):
                     ...
                 }
 
@@ -2600,6 +2616,8 @@ x86_64 FrameWork :
              //  variable number of arguments.
              //  R10 is used for passing a function's static chain pointer.
              //  address of object also be considered as a INTEGER.
+             !!  for kernel interfaces,use r10 register to instead rcx register for pass the
+                 forth argument.
 
           if the class is SSE,the next available vector register is used,the registers are taken in the 
           order from XMM0 to XMM7.
@@ -2772,5 +2790,3 @@ Somethings>
       2:      #  jmp 2b
       ...
       jmp 2b
-
-

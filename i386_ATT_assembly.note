@@ -2815,3 +2815,33 @@ Somethings>
       2:      #  jmp 2b
       ...
       jmp 2b
+
+    C library function printf() requires stack 16bytes aligned.if we want to invoke printf()
+    in assembly program,we must ensure rsp meets this requirement.
+        pushq   %rbp
+        movq    %rsp, %rbp
+        ...
+        call    printf
+        ...
+        movq    %rbp, %rsp
+        popq    %rbp
+    note that,'call' instruction will push 8bytes rip into stack,that means,if we used
+    stack frame,then must ensure the "stack frame size + 8bytes rip" is multiple of 16.
+        pushq   %rbp        # 8bytes
+        movq    %rsp, %rbp
+        subq    $0x40, %rsp # create stack frame,size is 4 * 16 bytes.
+        ...
+        call    printf      # 8bytes
+                            # at there,the stack memory is consumed
+                            #     8 + 8 + 4 * 16 = 5 * 16 bytes
+                            # thus,stack still 16bytes aligned.
+        ...
+        movq    %rbp, %rsp
+        popq    %rbp
+    ! if stack is not 16bytes aligned when calling printf(),the function will trigger
+      General Protection Fault,kernel will send SIGSEGV to this program.
+      the reason of this requirement is printf() implementation may used SSE instructions,
+      these instructions requires 16bytes aligned.
+      in addition,the SystemV x86-64 ABI enforces the rule that rsp must be 16bytes aligned
+      before a 'call' instruction is executed.
+

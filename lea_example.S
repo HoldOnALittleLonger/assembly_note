@@ -8,6 +8,7 @@ fmt:
 
 .section .text
 .global main
+        .type main, @function
 main:
         # This stack frame setup is necessary,
         # because printf() requires the stack

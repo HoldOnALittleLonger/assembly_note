@@ -440,29 +440,53 @@ AT&T Assembly basic explanation :
       '.global'  ->    Define a global symbol.
       '_start:'  ->    A symbol.'linker' will use this symbol to set up for execulation-file'start-pointer.
 
-    What is symbol?
-      Answer: 
-        Symbol is a label,it is not instruction.If only be processed by translater,translater use it to mark a memory address.
-        So that means a symbol is a address mark or is a address.In program could use symbol to represent a address value.
-        The style of symbol : 
-          Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a label.
+    Using Memory Location
+        we can define data in assembly through symbol and the data type or the length specifier.
+        a symbol is a label,it points to a memory location;a data type and the default value for memory bytes.
+        length specifier is used in .bss section to define a memory space.
+        ! symbol(the label) only processed by compiler,it will be used to mark memory address.
 
-        #  Remember,symbol is an address.
-        !  we could use $label to get address of the label;straight use label means get value from the address.
-        !  if symbol is a numberic value such 0, 1, 2, ..., 33, ...
-           the suffixes 'b' and 'f' are able to be attached.
-             e.g.
-               1:
-                       pushl (~vector-$0x80)
-                       nop
-                       nop
-                       jmp 1b      #  backward search label 1
-                       nop
-                       jmp 2f      #  forward search label 2
-                       nop
-                       nop
-               2:
-                       jmp common_interrupt
+        The style of symbol
+            Use ' . || _ || [A-Z] || [a-z] || ? ' as head,use a ':' as end.':' means that the signal is a label.
+
+        when you want to refer to the data stored in a specified memory location and where is represented by
+        a symbol,we can just use the symbol refer to the data.but if we want to refer to the memory address
+        about that location,we need use '$' as prefix to the symbol for get the address.
+            int_v:
+                .int 2  # data type is integer,default value is 2,memory location referred by @int_v.
+
+            movl    int_v, %eax    # refer to the value
+            movl    $int_v, %edi   # refer to the memory address
+            leal    int_v, %eax    # refer to the memory address
+
+        because symbol can be used to represents memory address,sometimes we need some symbols in .text location
+        to mark ip position,then we can jump to where.
+                movq    $0x02, %rax
+                xorq    %rax, %rax
+                testq   $0x00, %rax
+                je      do_syscall_exit
+
+            do_syscall_exit:        # ----+
+                                    #     |
+                movq    $0x3c, %rax # <---+
+                movq    $0x00, %rdi
+                notq    %rdi        # -1 = ~1 + 1 => 0xff
+                syscall
+                ...
+            1:                      # <----+
+                movl    $0x04, %eax #      |
+                movl    $0x02, %edx #      |
+                cmpl    %edx, %eax  #      |
+                je      2f          # -----+----+
+                ...                 #      |    |
+            2:                      # <----+----+
+                movl    $0x02, %eax #      |
+                xorl    $0x01, %eax #      |
+                testl   $0x03, %eax #      |
+                je      1b          # -----+
+                ...
+        the suffix 'b' and 'f' to the numeric label can be used to specify the search direction of memory position.
+        'b' means backward to search the label,and 'f' means forward to search the label.
 
     Commands of Assembler >
       For anthoer assemblers them have some commands all as not same,the command is not a instruction,commands only be processed by
@@ -541,7 +565,8 @@ AT&T Assembly basic explanation :
              sub        $2,%EAX       # None signed subtract,EAX=%EAX-2;this Opcode'operand leght would be auto to matching by translater.
 
     The data types defined by GNU-Assembler >
-      Commands            Type
+      Type                Description
+
       .ascii              text string
       .asciz              text string use a '\0' as end
       .byte               a value length is one byte

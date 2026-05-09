@@ -23,6 +23,7 @@ pfmt_vendorID:
 
 .section .text
 .global main
+        .type main, @function
 main:
         /* we do not store the general registers that we may use,
          * because we will just invoke sys_exit() to stop process.

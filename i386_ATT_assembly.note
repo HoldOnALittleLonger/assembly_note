@@ -607,8 +607,8 @@ AT&T Assembly basic explanation :
         .lcomm      Declare locale normaly memory zone for uninitialized-data.
 
         Syntax : 
-          .comm symbol, length
-          .lcomm symbol, length
+          .comm symbol, length, alignment
+          .lcomm symbol, length, alignment
 
           .comm type could be accessing by others external programs.
           .lcomm type could not be accessing by others external programs.
@@ -631,17 +631,17 @@ AT&T Assembly basic explanation :
               Data element length
               Index_Address to Determinding for the element
 
-            The general expression style : Section:Offset(Base, Index, Scale)
+            The general expression style : Section:Displacement(Base, Index, Scale)
               But Linux working on the Protect method,exclution for kernel programs all applications could only seen linear address.
               So could not use the segment registers in that expression.
 
             The calculation method : 
-              The-real-address = Section_Reg * 16 + Base_Addres + Index * Scale + Offset
+              The-real-address = Section_Reg * 16 + Base_Addres + Index * Scale + Displacement
                     
-              Because the protect working mode,so use Base_Address,Index_Address,Scale,Offset to access to memory location.
+              Because the protect working mode,so use Base_Address,Index_Address,Scale,Displacement to access to memory location.
               Base_Address and Index_Address could is any 32bits register.
               Scale could is the value 1, 2, 4, 8.
-              Offset is the Decimal Positive or Negative number.
+              Displacement is the Decimal Positive or Negative number.
               And the Base_Addres and Index_Addres can use only one of them,but at that situation,',' still needed as placeholder.
               The Scale default is '1'.
 
@@ -655,6 +655,35 @@ AT&T Assembly basic explanation :
 
         Absolute addressing : 
           M[Imm] -->  movq        0x600639,%EAX
+
+        RIP Relative Addressing :
+          Displacement(%rip)
+          Symbol(%rip)
+
+          the rip relative addressing is available only in x86 64-bit platform.
+          this kind of addressing mode can let us to addressing data that is
+          Position Independent,allows us access to 64-bit memory address using
+          only a 32-bit offset(displacement),can reduce instruction size,and can
+          simplify the linker's relocate works.
+            .section .data
+            data_obj:
+                .byte 0
+
+            .section .bss
+                .comm bss_buffer 8,16
+
+            .section .text
+                movb        data_obj(%rip), %al    # move value at @data_obj into al
+                leaq        bss_buffer(%rip), %rdi # load address @bss_buffer into rdi
+
+          ! note that,in the RIP-Relative Addressing,it use the next instruction's
+            address as the base address,not the instruction that is using this addressing.
+            @Symbol in this mode does not represent "derefer",GAS compiler will interprets
+            it to the displacement from the next instruction reach to that @Symbol.
+            # exactly,the rip is updated when CPU readed an instruction,thus rip's content
+              is the address of next instruction.
+            # 32-bit displace limits the addressing range to +(-)2GB.
+          ! this kind of addressing can only refer to the memory position in current code.
 
         The 'lea' instruction :
           LEA        mem, r16/r32/r64        load effective address

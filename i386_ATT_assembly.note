@@ -902,44 +902,39 @@ Instructions Set :
 
     ---
 
-    #    Math operation
+Math operations :
+    Addition :
+      IaddX    source,destination
+      #    source could is ImmN,MemAddr-Data,Reg.
+      #    destination could is MemAddr-Data,Reg.
+      #    But could not use MemAddr as source and destination at the same time.
+      #    Add result would be saved in 'destination'.
+      #    'X' could is 'b','w','l','q'(In 64bit model).
+      #    'I' could is 'i(Signed)',or is null.
 
-        ###    Addition
+      !    Becareful,'add' would change EFLAGS register.'CF' is 'carry or borrow','OF' is 'overflow'.
 
-        IaddX    source,destination
+      IadcX    source,destination
+      #    adcX could processing the values are greater than addX's.Because adcX will use CF-bit to do adding calculate.
+      #    source could is 8bit,16bit,32bit Register or MemAddr-Data.
+      #    destination could is 8bit,16bit,32bit,Register or MemAddr-Data.
+      #    But could not use MemAddr as source and destination at the same time.
+      #    'X' could is 'b','w','l','q'.
+      #    'I' could is 'i(Signed)',or is null.
 
-        #    source could is ImmN,MemAddr-Data,Reg.
-        #    destination could is MemAddr-Data,Reg.
-        #    But could not use MemAddr as source and destination at the same time.
-        #    Add result would be saved in 'destination'.
-        #    'X' could is 'b','w','l','q'(In 64bit model).
-        #    'I' could is 'i(Signed)',or is null.
-
-        !    Becareful,'add' would change EFLAGS register.'CF' is 'carry or borrow','OF' is 'overflow'.
-
-        IadcX    source,destination
-
-        #    adcX could processing the values are greater than addX's.Because adcX will use CF-bit to do adding calculate.
-        #    source could is 8bit,16bit,32bit Register or MemAddr-Data.
-        #    destination could is 8bit,16bit,32bit,Register or MemAddr-Data.
-        #    But could not use MemAddr as source and destination at the same time.
-        #    'X' could is 'b','w','l','q'.
-        #    'I' could is 'i(Signed)',or is null.
-
-            For example to adding two 32bit values : 
-                
-                    #    The value1
-                    movw    $0xFFFF,%AX    //    High 16bit
-                    movw    $0xE0BC,%BX    //    Low 16bit
+      For example to adding two 32bit values : 
+          #    The value1
+          movw    $0xFFFF,%AX    //    High 16bit
+          movw    $0xE0BC,%BX    //    Low 16bit
                     
-                    #    The value2
-                    movw    $0x3012,%CX    //    High 16bit
-                    movw    $0x1003,%DX    //    Low 16bit
+          #    The value2
+          movw    $0x3012,%CX    //    High 16bit
+          movw    $0x1003,%DX    //    Low 16bit
 
-                    addw    %BX,%DX        //    Low 16bit + Low 16bit        CF=1.
-                    adcw    %AX,%CX        //    High 16bit + High 16bit
+          addw    %BX,%DX        //    Low 16bit + Low 16bit        CF=1.
+          adcw    %AX,%CX        //    High 16bit + High 16bit
 
-                    Result = CX(Hight 16bit),DX(Low 16bit)
+          Result = CX(Hight 16bit),DX(Low 16bit)
 
         ##    Subtraction
 
@@ -1034,53 +1029,59 @@ Instructions Set :
             #    source could is 8bit,16bit,32bit,Register or MemAddr-Data.
             #    Other syntax as same as none-signed division.
 
-    ---
+
     
-    #    Bit operation
+    Bit operation :
+      shlX        To left logic move bit.
+      salX        To left calculation move bit.
+      shrX        To right logic move bit.
+      sarX        To right calculation move bit.
 
-        ##    Bit Move
+      Syntax :
+        shl    destination             -->    The bits in destination move to left with 1bit.
+        shl    %CL, destination        -->    The bits in destination move to left with the bit-number in CL.
+        shl    shifter, destination    -->    The bits in destination move to left with the bit-number is equal to shifter.
 
-        shlX        To left logic move bit.
-        salX        To left calculation move bit.
-    
-        shrX        To right logic move bit.
-        sarX        To right calculation move bit.
+        # destination could is 8bit,16bit,32bit,Register or MemAddr-Data.
+        # 'X' is the length suffix of destination.
+        # The bit had been moved to outside will be saving in 'CF' temporarily(Next bit will cover it). -- shlX/salX
+        # The new null bit will be fulling by '0'. -- shlX/salX
 
-        Syntax :
-            
-            shl    destination        -->    The bits in destination move to left with 1bit.
-            shl    %CL,destination        -->    The bits in destination move to left with the bit-number in CL.
-            shl    shifter,destination    -->    The bits in destination move to left with the bit-number is equal to shifter.
+      The syntax of shrX and sarX as same as shlX and salX.
+        # But for signed value,move bit will cause some problems.
+        # If destination is a none-signed value,that is don't worry,but if it is a signed value,the highest bit is the symbol of 
+        # positive or negative.So,SHRX will clear the null bits in left,and SARX will full older symbol-bit to the highest bit.
 
-            #    destination could is 8bit,16bit,32bit,Register or MemAddr-Data.
-            #    'X' is the length of destination.
+      # Cycle(rotate) to move bit
 
-            #    The bit had been moved to outside will be saving in 'CF' temporarily(Next bit will cover it).    --    shlX/salX
-            #    The new null bit will be fulling by '0'.    --    shlX/salX
+      ROLX        To left move bit by cycle.
+      RORX        To right move bit by cycle.
+      RCLX        To left move bit by cycle with 'Carry-flag' together.
+      RCRX        To right move bit by cycle with 'Carry-flag' together.
 
-            The syntax of shrX and sarX as same as shlX and salX.
-        
-            #    But for signed value,move bit will cause some problems.
-            #    If destination is a none-signed value,that is don't worry,but if it is a signed value,the highest bit is the symbol of 
-            #    positive or negative.So,SHRX will clear the null bits in left,and SARX will full older symbol-bit to the highest bit.
+      The cycle move bit instructions,in the general as same as SHLX/SHRX/SALX/SARX.But them would not drop the overflow-bit,
+      them will be placing the overflow-bit to the other place.(Left to Right,Right to Left).
 
-        ##    Cycle to move bit
+      Syntax : 
+        rolX    source             -->    Move 1bit to left.
+        rolX    %CL, source        -->    Move ?bits to left.(? is counter in CL-Reg).
+        rolX    shifter, source    -->    Move shifter-bits to left.(shifter is a immediate-value).
 
-        ROLX        To left move bit by cycle.
-        RORX        To right move bit by cycle.
-        RCLX        To left move bit by cycle with 'Carry-flag' together.
-        RCRX        To right move bit by cycle with 'Carry-flag' together.
+      e.g.
+        operand is 01101101
+                   |
+                   +------------------+
+                                      |
+                                      V
+        rolb    $1, @operand # 11011010
 
-        The cycle move bit instructions,in the general as same as SHLX/SHRX/SALX/SARX.But them would not drop the overflow-bit,them will be placing 
-    the overflow-bit to the other place.(Left to Right,Right to Left).
+        operand is 01101101
+                          |
+                          +----+
+                               |
+                               V
+        rorb    $1, @operand # 10110110
 
-        Syntax : 
-            
-            rolX    source            -->    Move 1bit to left.
-            rolX    %CL,source        -->    Move ?bits to left.(? is counter in CL-Reg).
-            rolX    shifter,source        -->    Move shifter-bits to left.(shifter is a immediate-value).
-
-    ---
 
     #    Logic operation :
 

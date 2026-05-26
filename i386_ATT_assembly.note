@@ -535,8 +535,8 @@ AT&T Assembly basic explanation :
            ModR/M >
              Mod | Reg/Opcode | r/m
 
-             ModR : 2 bits.It always using with 'r/m'.Them defined register or address-accessing-mode in the Opcode.In Opcode,possible 
-                    address accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
+             Mod : 2 bits.It always using with 'r/m'.Them defined register or address-accessing-mode in the Opcode.In Opcode,possible 
+                   address accessing-mode have 24 kinds,adding the eight for registers,so all the values have 32 kinds probably.
                 
              Reg/Opcode : 3Bits.Allowed to use the 3bits to defined Opcode feature or defined register-value further.
 

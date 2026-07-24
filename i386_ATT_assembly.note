@@ -2384,6 +2384,12 @@ Inline Assembly :
                 #    %0 -> result
                 #    %1 -> data1
                 #    %2 -> data2
+    
+                #    %b1 -> force to use 8bit register for the operand
+                #    %w1 -> force to use 16bit register for the operand
+                #    %l1 -> force to use 32bit register for the operand
+                     ! 'b' 'w' 'l' have different width to different platform.
+                       the above is x86-specific.
 
             ###
 
